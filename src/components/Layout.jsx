@@ -70,10 +70,6 @@ const Layout = ({ children }) => {
             </div>
           </header>
           <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-pink-50 to-pink-100">
-            <div className="mb-6 text-center">
-              <h2 className="text-xl font-semibold text-pink-800">Fine-tune OpenAI models with ease</h2>
-              <p className="text-sm text-pink-600 mt-1">Empowering AI, one strawberry at a time.</p>
-            </div>
             {children}
           </main>
         </div>
