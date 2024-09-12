@@ -3,6 +3,7 @@ import Dashboard from '../views/Dashboard.vue'
 import NewJob from '../views/NewJob.vue'
 import JobStatus from '../views/JobStatus.vue'
 import ModelTesting from '../views/ModelTesting.vue'
+import Settings from '../views/Settings.vue'
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/test',
     name: 'ModelTesting',
     component: ModelTesting
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: Settings
   }
 ]
 
