@@ -24,17 +24,6 @@ const Index = () => {
     setDrawerOpen(false);
   };
 
-  const drawer = (
-    <VList>
-      {navItems.map((item) => (
-        <VListItem key={item.title} onClick={() => handleNavigation(item.path)}>
-          <VListItemIcon><VIcon>{item.icon}</VIcon></VListItemIcon>
-          <VListItemTitle>{item.title}</VListItemTitle>
-        </VListItem>
-      ))}
-    </VList>
-  );
-
   return (
     <VApp>
       <VAppBar app>
