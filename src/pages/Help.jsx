@@ -13,7 +13,7 @@ const Help = () => {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 bg-pink-100">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="technical">Technical</TabsTrigger>
               <TabsTrigger value="usage">Usage</TabsTrigger>
