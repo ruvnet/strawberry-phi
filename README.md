@@ -4,70 +4,6 @@
 Strawberry Phi is a fine-tuning application for OpenAI's GPT models. The purpose of this project is to provide an easy-to-use interface for creating custom models tailored to specific needs. The goal is to enable users to fine-tune GPT models with their own data, resulting in models that perform better on their unique tasks.
 
 **Demo**: https://strawberry-phi.gptengineer.run
-
-
-## Technical Details
-
-### Architecture
-
-The system is built using a modern web stack, including Vite, React, and Tailwind CSS. The backend interacts with OpenAI's API to manage fine-tuning jobs and model testing.
-
-### Technologies Used
-
-- Vite
-- React
-- shadcn-ui
-- Tailwind CSS
-- OpenAI API
-
-### System Requirements
-
-- Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-- OpenAI API key
-
-## Benefits and Features
-
-### Benefits
-
-- Easy-to-use interface for fine-tuning GPT models
-- Custom models tailored to specific needs
-- Improved performance on unique tasks
-
-### Features
-
-- File upload and validation
-- Model selection and configuration
-- Fine-tuning job management
-- Model testing with custom prompts
-- Real-time job status updates
-- Secure API key management
-
-## Implementation
-
-### Step-by-Step Instructions
-
-1. Clone the repository using the project's Git URL.
-   ```sh
-   git clone <YOUR_GIT_URL>
-   ```
-
-2. Navigate to the project directory.
-   ```sh
-   cd <YOUR_PROJECT_NAME>
-   ```
-
-3. Install the necessary dependencies.
-   ```sh
-   npm i
-   ```
-
-4. Start the development server with auto-reloading and an instant preview.
-   ```sh
-   npm run dev
-   ```
-
-5. Set your OpenAI API key in the Settings page of the application.
-
 ## Advanced Features
 
 ### Additional Capabilities
@@ -238,3 +174,68 @@ The model is tested on various benchmarks, and its performance is used to furthe
 The key innovation of this approach is that it teaches the model not just to provide answers, but to critically evaluate its own reasoning and correct itself when necessary. This leads to more accurate and reliable outputs, especially in complex reasoning tasks.
 
 This reflection-tuning technique represents a significant advancement in language model training, potentially reducing hallucinations and improving the overall reliability of AI-generated responses.
+
+
+
+## Technical Details
+
+### Architecture
+
+The system is built using a modern web stack, including Vite, React, and Tailwind CSS. The backend interacts with OpenAI's API to manage fine-tuning jobs and model testing.
+
+### Technologies Used
+
+- Vite
+- React
+- shadcn-ui
+- Tailwind CSS
+- OpenAI API
+
+### System Requirements
+
+- Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- OpenAI API key
+
+## Benefits and Features
+
+### Benefits
+
+- Easy-to-use interface for fine-tuning GPT models
+- Custom models tailored to specific needs
+- Improved performance on unique tasks
+
+### Features
+
+- File upload and validation
+- Model selection and configuration
+- Fine-tuning job management
+- Model testing with custom prompts
+- Real-time job status updates
+- Secure API key management
+
+## Implementation
+
+### Step-by-Step Instructions
+
+1. Clone the repository using the project's Git URL.
+   ```sh
+   git clone <YOUR_GIT_URL>
+   ```
+
+2. Navigate to the project directory.
+   ```sh
+   cd <YOUR_PROJECT_NAME>
+   ```
+
+3. Install the necessary dependencies.
+   ```sh
+   npm i
+   ```
+
+4. Start the development server with auto-reloading and an instant preview.
+   ```sh
+   npm run dev
+   ```
+
+5. Set your OpenAI API key in the Settings page of the application.
+
