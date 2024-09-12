@@ -12,6 +12,7 @@ import ReactMarkdown from 'react-markdown';
 const ModelTesting = () => {
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('');
+  const [rawResponse, setRawResponse] = useState('');
   const [selectedModel, setSelectedModel] = useState('gpt-4o-mini');
   const [temperature, setTemperature] = useState(0.7);
   const [maxTokens, setMaxTokens] = useState(150);
@@ -23,6 +24,7 @@ const ModelTesting = () => {
   const testModel = async () => {
     if (!apiKey) {
       setResponse('API key not found. Please set your API key in the Settings page.');
+      setRawResponse(JSON.stringify({ error: 'API key not found' }, null, 2));
       return;
     }
 
@@ -44,16 +46,18 @@ const ModelTesting = () => {
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error?.message || 'Unknown error'}`);
+        throw new Error(data.error?.message || 'Unknown error');
       }
 
-      const data = await response.json();
       setResponse(data.choices[0].message.content);
+      setRawResponse(JSON.stringify(data, null, 2));
     } catch (error) {
       console.error('Error testing model:', error);
       setResponse(`Error: ${error.message}`);
+      setRawResponse(JSON.stringify({ error: error.message }, null, 2));
     }
   };
 
@@ -174,9 +178,9 @@ const ModelTesting = () => {
                 )}
               </TabsContent>
               <TabsContent value="raw">
-                {response ? (
+                {rawResponse ? (
                   <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto">
-                    <code className="text-sm text-strawberry-800">{response}</code>
+                    <code className="text-sm text-strawberry-800">{rawResponse}</code>
                   </pre>
                 ) : (
                   <p className="text-strawberry-600">No response yet. Test the model to see results.</p>
