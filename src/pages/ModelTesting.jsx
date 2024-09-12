@@ -18,7 +18,7 @@ const ModelTesting = () => {
     }
 
     try {
-      const response = await fetch('https://api.openai.com/v1/completions', {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -26,17 +26,18 @@ const ModelTesting = () => {
         },
         body: JSON.stringify({
           model: selectedModel,
-          prompt: prompt,
+          messages: [{ role: "user", content: prompt }],
           max_tokens: 150,
         }),
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error?.message || 'Unknown error'}`);
       }
 
       const data = await response.json();
-      setResponse(data.choices[0].text);
+      setResponse(data.choices[0].message.content);
     } catch (error) {
       console.error('Error testing model:', error);
       setResponse(`Error: ${error.message}`);
