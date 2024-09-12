@@ -70,6 +70,12 @@ const NewJob = () => {
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold text-strawberry-800">New Fine-tuning Job</h1>
+      <p className="text-strawberry-600 mb-6">
+        Create a new fine-tuning job to customize GPT models for your specific needs. 
+        Follow the steps below to upload your training data, select a model, and configure 
+        the fine-tuning parameters. This process will help you create a model that's 
+        tailored to your unique use case.
+      </p>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 bg-pink-100">
           <TabsTrigger value="upload" className="data-[state=active]:bg-pink-300">Upload File</TabsTrigger>
