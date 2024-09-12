@@ -95,9 +95,9 @@ const Layout = ({ children }) => {
         <p className="text-strawberry-900">
           Fine-tune OpenAI models with ease
         </p>
-        <a href="https://github.com/ruvnet/strawberry-phi" target="_blank" rel="noopener noreferrer" className="text-strawberry-700 hover:text-strawberry-900 transition-colors">
-          GitHub Repository
-        </a>
+        <p className="text-strawberry-900 mt-2">
+          No Rights Reserved - Go Crazy 🤪, created By <a href="https://github.com/ruvnet/strawberry-phi" target="_blank" rel="noopener noreferrer" className="font-mr-dafoe text-red-800 hover:text-red-600 transition-colors">rUv</a>
+        </p>
       </footer>
 
       <Dialog open={!isApiKeySaved}>
