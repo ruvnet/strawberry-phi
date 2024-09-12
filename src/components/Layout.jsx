@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { LayoutDashboard, Plus, ListOrdered, TestTube, Settings, HelpCircle, Menu } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useApiKey } from '../contexts/ApiKeyContext';
 import "@fontsource/mr-dafoe";
 
 const navItems = [
@@ -16,9 +20,16 @@ const navItems = [
 
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [apiKeyInput, setApiKeyInput] = useState('');
+  const { isApiKeySaved, setApiKey } = useApiKey();
 
   const handleNavigation = (path) => {
     setSidebarOpen(false);
+  };
+
+  const handleSaveApiKey = () => {
+    setApiKey(apiKeyInput);
+    setApiKeyInput('');
   };
 
   const Sidebar = () => (
@@ -85,6 +96,38 @@ const Layout = ({ children }) => {
           GitHub Repository
         </a>
       </footer>
+
+      <Dialog open={!isApiKeySaved}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-center">
+              <span className="text-6xl">🍓</span>
+              <br />
+              <span className="font-mr-dafoe text-4xl text-pink-600">Strawberry Phi</span>
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              Fine-tune OpenAI models with ease. Please enter your OpenAI API key to get started.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="apiKey" className="text-right">
+                API Key
+              </Label>
+              <Input
+                id="apiKey"
+                value={apiKeyInput}
+                onChange={(e) => setApiKeyInput(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <Button onClick={handleSaveApiKey} className="w-full">Save API Key</Button>
+          <p className="text-sm text-gray-500 mt-4">
+            Your API key is securely encrypted and stored locally in your browser. We never send or store your API key on our servers.
+          </p>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

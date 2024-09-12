@@ -7,11 +7,15 @@ const STORAGE_KEY = 'strawberry_phi_api_key';
 
 export const ApiKeyProvider = ({ children }) => {
   const [apiKey, setApiKey] = useState(null);
+  const [isApiKeySaved, setIsApiKeySaved] = useState(false);
 
   useEffect(() => {
     const storedKey = localStorage.getItem(STORAGE_KEY);
     if (storedKey) {
-      decryptApiKey(storedKey).then(setApiKey);
+      decryptApiKey(storedKey).then((decryptedKey) => {
+        setApiKey(decryptedKey);
+        setIsApiKeySaved(true);
+      });
     }
   }, []);
 
@@ -35,10 +39,11 @@ export const ApiKeyProvider = ({ children }) => {
     const encryptedKey = await encryptApiKey(key);
     localStorage.setItem(STORAGE_KEY, encryptedKey);
     setApiKey(key);
+    setIsApiKeySaved(true);
   };
 
   return (
-    <ApiKeyContext.Provider value={{ apiKey, setApiKey: setAndEncryptApiKey }}>
+    <ApiKeyContext.Provider value={{ apiKey, setApiKey: setAndEncryptApiKey, isApiKeySaved }}>
       {children}
     </ApiKeyContext.Provider>
   );
