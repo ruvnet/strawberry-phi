@@ -13,17 +13,17 @@ const Help = () => {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 bg-pink-100">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="technical">Technical</TabsTrigger>
-              <TabsTrigger value="usage">Usage</TabsTrigger>
-              <TabsTrigger value="faq">FAQ</TabsTrigger>
+            <TabsList className="flex flex-wrap bg-pink-100 p-1 rounded-lg mb-4">
+              <TabsTrigger value="overview" className="flex-grow mb-1 mr-1">Overview</TabsTrigger>
+              <TabsTrigger value="technical" className="flex-grow mb-1 mr-1">Technical</TabsTrigger>
+              <TabsTrigger value="usage" className="flex-grow mb-1 mr-1">Usage</TabsTrigger>
+              <TabsTrigger value="faq" className="flex-grow mb-1">FAQ</TabsTrigger>
             </TabsList>
             <ScrollArea className="h-[60vh] mt-4 rounded-md border border-strawberry-200 p-4">
               <TabsContent value="overview">
-                <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Strawberry Phi: Fine-tuning OpenAI Models</h2>
+                <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Fine-tuning OpenAI Models: GPT-4o and GPT-4o-mini</h2>
                 <p className="text-strawberry-600 mb-4">
-                  Strawberry Phi is an advanced tool designed for fine-tuning OpenAI's GPT-4o and GPT-4o-mini models. It provides a user-friendly interface for customizing these powerful language models to suit specific tasks and domains.
+                  Our application provides a user-friendly interface for fine-tuning OpenAI's GPT-4o and GPT-4o-mini models. It offers customization options to adapt these powerful language models for specific tasks and domains.
                 </p>
                 <h3 className="text-lg font-semibold mb-2 text-strawberry-700">Key Features:</h3>
                 <ul className="list-disc list-inside space-y-2 text-strawberry-600">
@@ -57,7 +57,7 @@ const Help = () => {
                 </ul>
               </TabsContent>
               <TabsContent value="usage">
-                <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Using Strawberry Phi</h2>
+                <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Using the Fine-tuning Application</h2>
                 <ol className="list-decimal list-inside space-y-2 text-strawberry-600">
                   <li>Set up your OpenAI API key in the Settings page</li>
                   <li>Prepare your JSONL file with training data (prompt-completion pairs)</li>
@@ -92,7 +92,7 @@ const Help = () => {
                     <p className="text-strawberry-600">A: Fine-tuning duration varies based on the model size, amount of data, and chosen parameters. It can range from a few minutes to several hours. You can monitor the progress in real-time on the Job Status page.</p>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-strawberry-700">Q: Can I use my fine-tuned model outside of Strawberry Phi?</h3>
+                    <h3 className="text-lg font-semibold text-strawberry-700">Q: Can I use my fine-tuned model outside of this application?</h3>
                     <p className="text-strawberry-600">A: Yes, once fine-tuning is complete, you can use your custom model through OpenAI's API in your own applications or projects.</p>
                   </div>
                 </div>
