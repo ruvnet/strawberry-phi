@@ -21,15 +21,18 @@ const navItems = [
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
   const { isApiKeySaved, setApiKey } = useApiKey();
 
   const handleNavigation = (path) => {
     setSidebarOpen(false);
   };
 
-  const handleSaveApiKey = () => {
-    setApiKey(apiKeyInput);
-    setApiKeyInput('');
+  const handleSaveApiKey = async () => {
+    setIsSaving(true);
+    await setApiKey(apiKeyInput);
+    setIsSaving(false);
+    setApiKeyInput(''); // Clear the input after saving
   };
 
   const Sidebar = () => (
@@ -98,32 +101,34 @@ const Layout = ({ children }) => {
       </footer>
 
       <Dialog open={!isApiKeySaved}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] bg-gradient-to-br from-pink-100 to-pink-200 rounded-lg shadow-lg m-4 sm:m-0">
           <DialogHeader>
             <DialogTitle className="text-center">
               <span className="text-6xl">🍓</span>
               <br />
               <span className="font-mr-dafoe text-4xl text-pink-600">Strawberry Phi</span>
             </DialogTitle>
-            <DialogDescription className="text-center">
+            <DialogDescription className="text-center text-pink-700">
               Fine-tune OpenAI models with ease. Please enter your OpenAI API key to get started.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="apiKey" className="text-right">
+              <Label htmlFor="apiKey" className="text-right text-pink-700">
                 API Key
               </Label>
               <Input
                 id="apiKey"
                 value={apiKeyInput}
                 onChange={(e) => setApiKeyInput(e.target.value)}
-                className="col-span-3"
+                className="col-span-3 border-pink-300 focus:border-pink-500"
               />
             </div>
           </div>
-          <Button onClick={handleSaveApiKey} className="w-full">Save API Key</Button>
-          <p className="text-sm text-gray-500 mt-4">
+          <Button onClick={handleSaveApiKey} className="w-full bg-red-500 hover:bg-red-600 text-white">
+            {isSaving ? 'Saving...' : 'Save API Key'}
+          </Button>
+          <p className="text-sm text-pink-700 mt-4">
             Your API key is securely encrypted and stored locally in your browser. We never send or store your API key on our servers.
           </p>
         </DialogContent>
