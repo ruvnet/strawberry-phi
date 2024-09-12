@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { useApiKeyStore } from '../stores/apiKey';
+import { useApiKey } from '../contexts/ApiKeyContext';
 
 const ModelSelector = ({ onModelSelect }) => {
   const [models, setModels] = useState([]);
   const [filteredModels, setFilteredModels] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const { getApiKey } = useApiKeyStore();
+  const { apiKey } = useApiKey();
 
   useEffect(() => {
     const fetchModels = async () => {
-      const apiKey = await getApiKey();
       if (!apiKey) {
         console.error('API key not found');
         return;
@@ -37,7 +36,7 @@ const ModelSelector = ({ onModelSelect }) => {
     };
 
     fetchModels();
-  }, [getApiKey]);
+  }, [apiKey]);
 
   useEffect(() => {
     const filtered = models.filter(model =>

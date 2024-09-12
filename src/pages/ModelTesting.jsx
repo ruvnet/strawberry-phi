@@ -3,16 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import ModelSelector from '../components/ModelSelector';
-import { useApiKeyStore } from '../stores/apiKey';
+import { useApiKey } from '../contexts/ApiKeyContext';
 
 const ModelTesting = () => {
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('');
   const [selectedModel, setSelectedModel] = useState('');
-  const { getApiKey } = useApiKeyStore();
+  const { apiKey } = useApiKey();
 
   const testModel = async () => {
-    const apiKey = await getApiKey();
     if (!apiKey) {
       setResponse('API key not found. Please set your API key in the Settings page.');
       return;

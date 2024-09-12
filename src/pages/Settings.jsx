@@ -4,19 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { useApiKey } from '../contexts/ApiKeyContext';
 
 const Settings = () => {
-  const [apiKey, setApiKey] = useState('');
+  const [apiKeyInput, setApiKeyInput] = useState('');
   const [showApiKey, setShowApiKey] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const { setApiKey } = useApiKey();
 
-  const saveApiKey = () => {
+  const saveApiKey = async () => {
     setIsSaving(true);
-    // Simulated API call
-    setTimeout(() => {
-      setIsSaving(false);
-      // Here you would typically store the API key securely
-    }, 1000);
+    await setApiKey(apiKeyInput);
+    setIsSaving(false);
+    setApiKeyInput(''); // Clear the input after saving
   };
 
   return (
@@ -34,8 +34,8 @@ const Settings = () => {
                 <Input
                   id="apiKey"
                   type={showApiKey ? 'text' : 'password'}
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
+                  value={apiKeyInput}
+                  onChange={(e) => setApiKeyInput(e.target.value)}
                   className="border-strawberry-300 focus:border-strawberry-500 pr-10"
                 />
                 <Button
