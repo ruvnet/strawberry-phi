@@ -17,6 +17,10 @@ const navItems = [
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const handleNavigation = (path) => {
+    setSidebarOpen(false);
+  };
+
   const Sidebar = () => (
     <div className="space-y-4 py-4">
       <div className="px-3 py-2">
@@ -33,6 +37,7 @@ const Layout = ({ children }) => {
               variant="ghost"
               className="w-full justify-start text-pink-600 hover:text-pink-800 hover:bg-pink-100"
               asChild
+              onClick={() => handleNavigation(item.path)}
             >
               <Link to={item.path}>
                 {item.icon}
@@ -64,7 +69,7 @@ const Layout = ({ children }) => {
               </SheetContent>
             </Sheet>
             <div className="flex items-center">
-              <span className="text-sm font-medium text-pink-600">Fine-tune OpenAI models with ease</span>
+              <span className="text-sm font-medium text-pink-600">🍓 Strawberry Phi</span>
             </div>
           </header>
           <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-pink-50 to-pink-100">
@@ -74,7 +79,7 @@ const Layout = ({ children }) => {
       </div>
       <footer className="bg-white/50 backdrop-blur-sm border-t border-pink-200 py-4 px-6 text-center">
         <p className="text-strawberry-900">
-          No Rights Reserved - Go Crazy 🤪, created By <span className="font-mr-dafoe text-2xl">rUv</span>
+          Fine-tune OpenAI models with ease
         </p>
         <a href="https://github.com/ruvnet/strawberry-phi" target="_blank" rel="noopener noreferrer" className="text-strawberry-700 hover:text-strawberry-900 transition-colors">
           GitHub Repository
