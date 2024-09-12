@@ -46,7 +46,7 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, file, se
         </div>
       )}
       <JsonDisplay jsonContent={jsonContent} />
-      {(file || usePreExistingFile) && (
+      {file && !usePreExistingFile && (
         <div className="mt-4">
           <Button onClick={() => {/* Implement file conversion logic here */}} className="bg-strawberry-500 hover:bg-strawberry-600 text-white">
             Convert to JSONL
