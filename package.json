@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/mr-dafoe": "^5.1.0",
     "@hookform/resolvers": "^3.6.0",
     "@mdi/font": "^7.2.96",
     "@radix-ui/react-accordion": "^1.2.0",

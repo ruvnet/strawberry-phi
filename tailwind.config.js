@@ -87,6 +87,9 @@ module.exports = {
       backgroundImage: {
         'strawberry-gradient': 'linear-gradient(to bottom right, #fff0f5, #ffe0eb, #ffc1d7)',
       },
+      fontFamily: {
+        'mr-dafoe': ['Mr Dafoe', 'cursive'],
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
