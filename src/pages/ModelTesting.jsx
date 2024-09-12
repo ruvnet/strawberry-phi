@@ -57,17 +57,22 @@ const ModelTesting = () => {
     }
   };
 
-  const renderSlider = (label, value, setValue, min, max, step) => (
+  const renderSlider = (label, value, setValue, min, max, step, description) => (
     <div className="space-y-2">
-      <Label htmlFor={label}>{label}: {value}</Label>
-      <Slider
-        id={label}
-        min={min}
-        max={max}
-        step={step}
-        value={[value]}
-        onValueChange={(value) => setValue(value[0])}
-      />
+      <Label htmlFor={label} className="text-strawberry-700 font-semibold">{label}</Label>
+      <p className="text-xs text-strawberry-600 mb-2">{description}</p>
+      <div className="flex items-center space-x-2">
+        <Slider
+          id={label}
+          min={min}
+          max={max}
+          step={step}
+          value={[value]}
+          onValueChange={(value) => setValue(value[0])}
+          className="flex-grow"
+        />
+        <span className="text-sm font-medium text-strawberry-700 w-12 text-right">{value}</span>
+      </div>
     </div>
   );
 
@@ -81,28 +86,62 @@ const ModelTesting = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <ModelSelector onModelSelect={setSelectedModel} />
-            <Tabs defaultValue="temperature" className="w-full">
-              <TabsList className="grid w-full grid-cols-5 bg-pink-100">
-                <TabsTrigger value="temperature" className="bg-pink-100 data-[state=active]:bg-pink-200">Temperature</TabsTrigger>
-                <TabsTrigger value="maxTokens" className="bg-pink-100 data-[state=active]:bg-pink-200">Max Tokens</TabsTrigger>
-                <TabsTrigger value="topP" className="bg-pink-100 data-[state=active]:bg-pink-200">Top P</TabsTrigger>
-                <TabsTrigger value="frequencyPenalty" className="bg-pink-100 data-[state=active]:bg-pink-200">Frequency Penalty</TabsTrigger>
-                <TabsTrigger value="presencePenalty" className="bg-pink-100 data-[state=active]:bg-pink-200">Presence Penalty</TabsTrigger>
+            <Tabs defaultValue="basic" className="w-full">
+              <TabsList className="grid w-full grid-cols-3 bg-pink-100">
+                <TabsTrigger value="basic" className="bg-pink-100 data-[state=active]:bg-pink-200">Basic</TabsTrigger>
+                <TabsTrigger value="advanced" className="bg-pink-100 data-[state=active]:bg-pink-200">Advanced</TabsTrigger>
+                <TabsTrigger value="penalties" className="bg-pink-100 data-[state=active]:bg-pink-200">Penalties</TabsTrigger>
               </TabsList>
-              <TabsContent value="temperature">
-                {renderSlider("Temperature", temperature, setTemperature, 0, 1, 0.1)}
+              <TabsContent value="basic">
+                {renderSlider(
+                  "Temperature",
+                  temperature,
+                  setTemperature,
+                  0,
+                  2,
+                  0.1,
+                  "Controls randomness: Lower values make the output more focused and deterministic."
+                )}
+                {renderSlider(
+                  "Max Tokens",
+                  maxTokens,
+                  setMaxTokens,
+                  1,
+                  2048,
+                  1,
+                  "The maximum number of tokens to generate in the response."
+                )}
               </TabsContent>
-              <TabsContent value="maxTokens">
-                {renderSlider("Max Tokens", maxTokens, setMaxTokens, 1, 2048, 1)}
+              <TabsContent value="advanced">
+                {renderSlider(
+                  "Top P",
+                  topP,
+                  setTopP,
+                  0,
+                  1,
+                  0.1,
+                  "Controls diversity via nucleus sampling: 0.5 means half of all likelihood-weighted options are considered."
+                )}
               </TabsContent>
-              <TabsContent value="topP">
-                {renderSlider("Top P", topP, setTopP, 0, 1, 0.1)}
-              </TabsContent>
-              <TabsContent value="frequencyPenalty">
-                {renderSlider("Frequency Penalty", frequencyPenalty, setFrequencyPenalty, -2, 2, 0.1)}
-              </TabsContent>
-              <TabsContent value="presencePenalty">
-                {renderSlider("Presence Penalty", presencePenalty, setPresencePenalty, -2, 2, 0.1)}
+              <TabsContent value="penalties">
+                {renderSlider(
+                  "Frequency Penalty",
+                  frequencyPenalty,
+                  setFrequencyPenalty,
+                  -2,
+                  2,
+                  0.1,
+                  "Decreases the model's likelihood to repeat the same line verbatim."
+                )}
+                {renderSlider(
+                  "Presence Penalty",
+                  presencePenalty,
+                  setPresencePenalty,
+                  -2,
+                  2,
+                  0.1,
+                  "Increases the model's likelihood to talk about new topics."
+                )}
               </TabsContent>
             </Tabs>
             <Textarea
