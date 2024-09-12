@@ -42,7 +42,7 @@ const Layout = ({ children }) => {
   );
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-pink-50 to-pink-100">
+    <div className="flex flex-col h-screen overflow-hidden bg-gradient-to-br from-pink-50 to-pink-100">
       <aside className="hidden w-64 overflow-y-auto border-r border-pink-200 bg-white/50 backdrop-blur-sm md:block">
         <Sidebar />
       </aside>
@@ -65,6 +65,11 @@ const Layout = ({ children }) => {
           </div>
         </header>
         <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-pink-50 to-pink-100">{children}</main>
+        <footer className="bg-white/50 backdrop-blur-sm border-t border-pink-200 py-4 px-6 text-center">
+          <a href="https://github.com/ruvnet/strawberry-phi" target="_blank" rel="noopener noreferrer" className="font-mr-dafoe text-xl text-strawberry-900 hover:text-strawberry-700 transition-colors">
+            No Rights Reserved - Go Crazy 🤪, created By rUv
+          </a>
+        </footer>
       </div>
     </div>
   );
