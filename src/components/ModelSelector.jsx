@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { useApiKey } from '../contexts/ApiKeyContext';
 
-const ModelSelector = ({ onModelSelect }) => {
+const ModelSelector = ({ onModelSelect, defaultModel = 'gpt-4o-mini' }) => {
   const [models, setModels] = useState([]);
   const [filteredModels, setFilteredModels] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -58,7 +58,7 @@ const ModelSelector = ({ onModelSelect }) => {
         onChange={handleSearch}
         className="w-full"
       />
-      <Select onValueChange={onModelSelect}>
+      <Select onValueChange={onModelSelect} defaultValue={defaultModel}>
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select a model" />
         </SelectTrigger>

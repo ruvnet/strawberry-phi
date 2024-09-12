@@ -3,16 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { Label } from "@/components/ui/label";
 import ModelSelector from '../components/ModelSelector';
 import { useApiKey } from '../contexts/ApiKeyContext';
+import ReactMarkdown from 'react-markdown';
 
 const ModelTesting = () => {
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('');
-  const [selectedModel, setSelectedModel] = useState('');
+  const [selectedModel, setSelectedModel] = useState('gpt-4o-mini');
   const [temperature, setTemperature] = useState(0.7);
   const [maxTokens, setMaxTokens] = useState(150);
   const [topP, setTopP] = useState(1);
@@ -85,7 +85,7 @@ const ModelTesting = () => {
             <CardTitle className="text-strawberry-700">Select Model and Configure Parameters</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ModelSelector onModelSelect={setSelectedModel} />
+            <ModelSelector onModelSelect={setSelectedModel} defaultModel="gpt-4o-mini" />
             <Tabs defaultValue="basic" className="w-full">
               <TabsList className="grid w-full grid-cols-3 bg-pink-100">
                 <TabsTrigger value="basic" className="bg-pink-100 data-[state=active]:bg-pink-200">Basic</TabsTrigger>
@@ -159,11 +159,30 @@ const ModelTesting = () => {
             <CardTitle className="text-strawberry-700">Model Response</CardTitle>
           </CardHeader>
           <CardContent>
-            {response ? (
-              <p className="text-strawberry-600 whitespace-pre-wrap">{response}</p>
-            ) : (
-              <p className="text-strawberry-600">No response yet. Test the model to see results.</p>
-            )}
+            <Tabs defaultValue="rendered">
+              <TabsList className="mb-4">
+                <TabsTrigger value="rendered">Rendered</TabsTrigger>
+                <TabsTrigger value="raw">Raw</TabsTrigger>
+              </TabsList>
+              <TabsContent value="rendered">
+                {response ? (
+                  <div className="prose prose-strawberry max-w-none">
+                    <ReactMarkdown>{response}</ReactMarkdown>
+                  </div>
+                ) : (
+                  <p className="text-strawberry-600">No response yet. Test the model to see results.</p>
+                )}
+              </TabsContent>
+              <TabsContent value="raw">
+                {response ? (
+                  <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto">
+                    <code className="text-sm text-strawberry-800">{response}</code>
+                  </pre>
+                ) : (
+                  <p className="text-strawberry-600">No response yet. Test the model to see results.</p>
+                )}
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
       </div>
