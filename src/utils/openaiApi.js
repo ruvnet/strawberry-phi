@@ -24,3 +24,18 @@ export const fetchJobs = async (apiKey, page = 1, limit = 10) => {
     throw error;
   }
 };
+
+export const createFineTuningJob = async (apiKey, formData) => {
+  try {
+    const response = await axios.post(`${OPENAI_API_URL}/fine-tunes`, formData, {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error creating fine-tuning job:', error);
+    throw error;
+  }
+};
