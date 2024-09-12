@@ -104,7 +104,7 @@ const Layout = ({ children }) => {
         <DialogContent className="sm:max-w-[90%] md:max-w-[350px] bg-gradient-to-br from-pink-100 to-pink-200 rounded-lg shadow-lg m-4 sm:m-0">
           <DialogHeader>
             <DialogTitle className="text-center">
-              <span className="text-8xl animate-wiggle inline-block shadow-lg">🍓</span>
+              <span className="text-8xl animate-wiggle inline-block mb-4">🍓</span>
               <br />
               <span className="font-mr-dafoe text-4xl text-pink-600">Strawberry Phi</span>
             </DialogTitle>
