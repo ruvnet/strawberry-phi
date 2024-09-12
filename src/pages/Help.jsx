@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const Help = () => {
   return (
@@ -15,9 +16,10 @@ const Help = () => {
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="flex flex-wrap bg-pink-100 p-1 rounded-lg mb-4">
               <TabsTrigger value="overview" className="flex-grow mb-1 mr-1">Overview</TabsTrigger>
-              <TabsTrigger value="technical" className="flex-grow mb-1 mr-1">Technical</TabsTrigger>
-              <TabsTrigger value="usage" className="flex-grow mb-1 mr-1">Usage</TabsTrigger>
-              <TabsTrigger value="faq" className="flex-grow mb-1">FAQ</TabsTrigger>
+              <TabsTrigger value="finetune" className="flex-grow mb-1 mr-1">Fine-tuning</TabsTrigger>
+              <TabsTrigger value="jobstatus" className="flex-grow mb-1 mr-1">Job Status</TabsTrigger>
+              <TabsTrigger value="modeltesting" className="flex-grow mb-1 mr-1">Model Testing</TabsTrigger>
+              <TabsTrigger value="settings" className="flex-grow mb-1">Settings</TabsTrigger>
             </TabsList>
             <ScrollArea className="h-[60vh] mt-4 rounded-md border border-strawberry-200 p-4">
               <TabsContent value="overview">
@@ -32,70 +34,92 @@ const Help = () => {
                   <li>Customizable fine-tuning parameters</li>
                   <li>Real-time job monitoring and status updates</li>
                   <li>Model testing interface for immediate results</li>
+                  <li>Secure API key management</li>
                 </ul>
               </TabsContent>
-              <TabsContent value="technical">
-                <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Technical Specifications</h2>
-                <h3 className="text-lg font-semibold mb-2 text-strawberry-700">Supported Models:</h3>
+              <TabsContent value="finetune">
+                <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Fine-tuning Process</h2>
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="file-upload">
+                    <AccordionTrigger>File Upload</AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="list-disc list-inside space-y-2 text-strawberry-600">
+                        <li>Upload JSONL, CSV, or Parquet files</li>
+                        <li>Option to use a pre-existing file (strawberry-phi.jsonl)</li>
+                        <li>Automatic conversion of CSV and Parquet files to JSONL format</li>
+                        <li>File preview functionality</li>
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="model-selection">
+                    <AccordionTrigger>Model Selection</AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="list-disc list-inside space-y-2 text-strawberry-600">
+                        <li>Choose between GPT-4o and GPT-4o-mini</li>
+                        <li>Model search functionality</li>
+                        <li>Information about each model's capabilities and context window</li>
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="parameters">
+                    <AccordionTrigger>Fine-tuning Parameters</AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="list-disc list-inside space-y-2 text-strawberry-600">
+                        <li>Learning rate: Controls the step size during optimization</li>
+                        <li>Epochs: Number of complete passes through the training dataset</li>
+                        <li>Batch size: Number of training examples used in one iteration</li>
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </TabsContent>
+              <TabsContent value="jobstatus">
+                <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Job Status Monitoring</h2>
+                <p className="text-strawberry-600 mb-4">
+                  The Job Status page allows you to monitor and manage your fine-tuning jobs. It displays all your current and past fine-tuning tasks, allowing you to track progress, view details, and manage your custom models efficiently.
+                </p>
+                <h3 className="text-lg font-semibold mb-2 text-strawberry-700">Features:</h3>
                 <ul className="list-disc list-inside space-y-2 text-strawberry-600">
-                  <li>GPT-4o: OpenAI's advanced language model with enhanced capabilities</li>
-                  <li>GPT-4o-mini: A more compact version of GPT-4o, suitable for faster processing and deployment</li>
-                </ul>
-                <h3 className="text-lg font-semibold mt-4 mb-2 text-strawberry-700">Fine-tuning Process:</h3>
-                <ol className="list-decimal list-inside space-y-2 text-strawberry-600">
-                  <li>Data Preparation: Upload JSONL files containing prompt-completion pairs</li>
-                  <li>Model Selection: Choose between GPT-4o and GPT-4o-mini</li>
-                  <li>Hyperparameter Configuration: Set learning rate, epochs, and batch size</li>
-                  <li>Training: Utilize OpenAI's API for the fine-tuning process</li>
-                  <li>Evaluation: Automatic evaluation on a held-out validation set</li>
-                </ol>
-                <h3 className="text-lg font-semibold mt-4 mb-2 text-strawberry-700">Security Features:</h3>
-                <ul className="list-disc list-inside space-y-2 text-strawberry-600">
-                  <li>Encrypted storage of API keys</li>
-                  <li>Secure data handling during the fine-tuning process</li>
-                  <li>User authentication and authorization</li>
+                  <li>Real-time status updates for all jobs</li>
+                  <li>Individual job refresh functionality</li>
+                  <li>"Refresh All" button to update all job statuses at once</li>
+                  <li>Detailed job information view</li>
+                  <li>Pagination for managing multiple jobs</li>
                 </ul>
               </TabsContent>
-              <TabsContent value="usage">
-                <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Using the Fine-tuning Application</h2>
-                <ol className="list-decimal list-inside space-y-2 text-strawberry-600">
-                  <li>Set up your OpenAI API key in the Settings page</li>
-                  <li>Prepare your JSONL file with training data (prompt-completion pairs)</li>
-                  <li>Navigate to the New Job page to start a fine-tuning job</li>
-                  <li>Upload your JSONL file</li>
-                  <li>Select either GPT-4o or GPT-4o-mini as your base model</li>
-                  <li>Configure fine-tuning parameters (learning rate, epochs, batch size)</li>
-                  <li>Start the job and monitor its progress on the Job Status page</li>
-                  <li>Once fine-tuning is complete, test your model using the Model Testing page</li>
-                </ol>
-                <h3 className="text-lg font-semibold mt-4 mb-2 text-strawberry-700">Tips for Best Results:</h3>
+              <TabsContent value="modeltesting">
+                <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Model Testing</h2>
+                <p className="text-strawberry-600 mb-4">
+                  The Model Testing page allows you to interact with your fine-tuned models and test their performance with custom prompts.
+                </p>
+                <h3 className="text-lg font-semibold mb-2 text-strawberry-700">Features:</h3>
                 <ul className="list-disc list-inside space-y-2 text-strawberry-600">
-                  <li>Ensure your JSONL file is properly formatted and contains high-quality data</li>
-                  <li>Start with a small dataset and gradually increase as needed</li>
-                  <li>Experiment with different learning rates and epochs to optimize performance</li>
-                  <li>Use the Model Testing page to compare results with the base model</li>
+                  <li>Model selection from available fine-tuned models</li>
+                  <li>Custom prompt input</li>
+                  <li>Adjustable parameters:
+                    <ul className="list-disc list-inside ml-4">
+                      <li>Temperature: Controls randomness (0-2)</li>
+                      <li>Max Tokens: Maximum length of the generated response (1-2048)</li>
+                      <li>Top P: Controls diversity via nucleus sampling (0-1)</li>
+                      <li>Frequency Penalty: Decreases repetition (-2 to 2)</li>
+                      <li>Presence Penalty: Increases topic diversity (-2 to 2)</li>
+                    </ul>
+                  </li>
+                  <li>Real-time model response display</li>
+                  <li>Option to view raw API response</li>
                 </ul>
               </TabsContent>
-              <TabsContent value="faq">
-                <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Frequently Asked Questions</h2>
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-strawberry-700">Q: What's the difference between GPT-4o and GPT-4o-mini?</h3>
-                    <p className="text-strawberry-600">A: GPT-4o is the full-sized model with maximum capabilities, while GPT-4o-mini is a smaller version that offers faster processing and lower resource requirements, suitable for quicker deployments or less complex tasks.</p>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-strawberry-700">Q: How much data do I need for fine-tuning?</h3>
-                    <p className="text-strawberry-600">A: The amount of data needed depends on your specific use case. Generally, a few hundred high-quality examples can yield good results, but more data often leads to better performance.</p>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-strawberry-700">Q: How long does the fine-tuning process take?</h3>
-                    <p className="text-strawberry-600">A: Fine-tuning duration varies based on the model size, amount of data, and chosen parameters. It can range from a few minutes to several hours. You can monitor the progress in real-time on the Job Status page.</p>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-strawberry-700">Q: Can I use my fine-tuned model outside of this application?</h3>
-                    <p className="text-strawberry-600">A: Yes, once fine-tuning is complete, you can use your custom model through OpenAI's API in your own applications or projects.</p>
-                  </div>
-                </div>
+              <TabsContent value="settings">
+                <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Settings</h2>
+                <p className="text-strawberry-600 mb-4">
+                  The Settings page allows you to manage your OpenAI API key and configure other application settings.
+                </p>
+                <h3 className="text-lg font-semibold mb-2 text-strawberry-700">Features:</h3>
+                <ul className="list-disc list-inside space-y-2 text-strawberry-600">
+                  <li>Secure API key management</li>
+                  <li>Option to show/hide API key</li>
+                  <li>Encrypted storage of API key in local storage</li>
+                </ul>
               </TabsContent>
             </ScrollArea>
           </Tabs>
