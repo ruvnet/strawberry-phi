@@ -146,56 +146,59 @@ The key innovation of this approach is that it teaches the model not just to pro
 
 This reflection-tuning technique represents a significant advancement in language model training, potentially reducing hallucinations and improving the overall reliability of AI-generated responses.
 
-## How can I edit this code?
+## Overview
 
-There are several ways of editing your application.
+This configuration file defines a sophisticated multi-modal agentic AI assistant capable of handling complex tasks across various domains. It leverages Glaive's schema-based approach and synthetic data generation capabilities to create a highly customized and efficient model.
 
-**Use GPT Engineer**
+## Key Components
 
-Simply visit the GPT Engineer project at [GPT Engineer](https://gptengineer.app/projects/5744d052-cf39-44c8-bd80-0b0b8047e504/improve) and start prompting.
+### Model Basics
 
-Changes made via gptengineer.app will be committed automatically to this repo.
+- Name: AdvancedMultiModalAgenticAssistant
+- Base Model: phi-mini-128k
+- System Prompt: Defines the AI's core capabilities and goals
 
-**Use your preferred IDE**
+### Agentic Approaches
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in the GPT Engineer UI.
+- Includes various AI methodologies like sequential, concurrent, recurrent, and reinforcement learning approaches
+- Incorporates advanced techniques such as Q* and other hybrid approaches
 
-Follow these steps:
+### Dataset Schema
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- Defines structured input and output formats
+- Includes comprehensive fields for task understanding, planning, execution, and self-reflection
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Training Parameters
 
-# Step 3: Install the necessary dependencies.
-npm i
+- Specifies epochs, batch size, learning rate, and other hyperparameters
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+### Evaluation Metrics
 
-**Edit a file directly in GitHub**
+- Lists various metrics to assess model performance
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Fine-tuning Strategy
 
-**Use GitHub Codespaces**
+- Outlines initial and specialized training phases
+- Includes provisions for continual learning
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Advanced Features
 
-## How can I deploy this project?
+- Error handling mechanisms
+- Bias mitigation strategies
+- Personalization capabilities
+- Performance tracking
+- Multi-task learning support
+- Human-in-the-loop integration
 
-All GPT Engineer projects can be deployed directly via the GPT Engineer app.
+## Usage
 
-Simply visit your project at [GPT Engineer](https://gptengineer.app/projects/5744d052-cf39-44c8-bd80-0b0b8047e504/improve) and click on Share -> Publish.
+- Customize the JSON file according to your specific use case and requirements.
+- Use Glaive's platform to generate synthetic data based on this schema.
+- Train your model using Glaive's custom model training capabilities.
+- Utilize Glaive's API for model deployment and integration into your applications.
 
-## I want to use a custom domain - is that possible?
+## Best Practices
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.gptengineer.app/tips-tricks/custom-domain/)
+- Regularly update and refine your model based on performance metrics and user feedback.
+- Leverage Glaive's rapid iteration capabilities for continuous improvement.
+- Ensure compliance with ethical AI guidelines and data privacy regulations.
