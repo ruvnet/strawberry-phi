@@ -1,31 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useApiKey } from '../contexts/ApiKeyContext';
+import { fetchJobs } from '../utils/openaiApi';
 
 const JobStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedJob, setSelectedJob] = useState(null);
+  const [jobs, setJobs] = useState([]);
+  const [totalJobs, setTotalJobs] = useState(0);
+  const { apiKey } = useApiKey();
   const jobsPerPage = 5;
 
-  // Mock data for jobs
-  const jobs = [
-    { id: '1', model: 'GPT-4o', status: 'Completed', createdAt: '2023-04-01 10:00:00', completedAt: '2023-04-01 11:30:00', trainingFile: 'data1.jsonl', epochs: 3, batchSize: 16 },
-    { id: '2', model: 'GPT-4o-mini', status: 'In Progress', createdAt: '2023-04-02 09:15:00', completedAt: null, trainingFile: 'data2.jsonl', epochs: 4, batchSize: 32 },
-    { id: '3', model: 'GPT-4o', status: 'Failed', createdAt: '2023-04-03 14:20:00', completedAt: '2023-04-03 14:25:00', trainingFile: 'data3.jsonl', epochs: 2, batchSize: 8 },
-    { id: '4', model: 'GPT-4o-mini', status: 'Queued', createdAt: '2023-04-04 11:45:00', completedAt: null, trainingFile: 'data4.jsonl', epochs: 3, batchSize: 16 },
-    { id: '5', model: 'GPT-4o', status: 'Completed', createdAt: '2023-04-05 16:30:00', completedAt: '2023-04-05 18:00:00', trainingFile: 'data5.jsonl', epochs: 5, batchSize: 32 },
-    { id: '6', model: 'GPT-4o-mini', status: 'In Progress', createdAt: '2023-04-06 08:00:00', completedAt: null, trainingFile: 'data6.jsonl', epochs: 4, batchSize: 16 },
-    { id: '7', model: 'GPT-4o', status: 'Completed', createdAt: '2023-04-07 13:10:00', completedAt: '2023-04-07 14:40:00', trainingFile: 'data7.jsonl', epochs: 3, batchSize: 32 },
-  ];
+  useEffect(() => {
+    const loadJobs = async () => {
+      if (apiKey) {
+        try {
+          const response = await fetchJobs(apiKey, currentPage, jobsPerPage);
+          setJobs(response.data);
+          setTotalJobs(response.total);
+        } catch (error) {
+          console.error('Error fetching jobs:', error);
+        }
+      }
+    };
+    loadJobs();
+  }, [apiKey, currentPage]);
 
-  const indexOfLastJob = currentPage * jobsPerPage;
-  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = jobs.slice(indexOfFirstJob, indexOfLastJob);
-
-  const totalPages = Math.ceil(jobs.length / jobsPerPage);
+  const totalPages = Math.ceil(totalJobs / jobsPerPage);
 
   const nextPage = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
@@ -37,17 +42,21 @@ const JobStatus = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Completed':
+      case 'succeeded':
         return 'text-green-600';
-      case 'In Progress':
+      case 'running':
         return 'text-blue-600';
-      case 'Failed':
+      case 'failed':
         return 'text-red-600';
-      case 'Queued':
+      case 'queued':
         return 'text-yellow-600';
       default:
         return 'text-gray-600';
     }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleString();
   };
 
   return (
@@ -65,12 +74,12 @@ const JobStatus = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentJobs.map((job) => (
+            {jobs.map((job) => (
               <TableRow key={job.id} className="hover:bg-strawberry-50">
                 <TableCell className="text-strawberry-600">{job.id}</TableCell>
-                <TableCell className="text-strawberry-600">{job.model}</TableCell>
+                <TableCell className="text-strawberry-600">{job.fine_tuned_model || job.model}</TableCell>
                 <TableCell className={`font-semibold ${getStatusColor(job.status)}`}>{job.status}</TableCell>
-                <TableCell className="text-strawberry-600">{job.createdAt}</TableCell>
+                <TableCell className="text-strawberry-600">{formatDate(job.created_at)}</TableCell>
                 <TableCell>
                   <Dialog>
                     <DialogTrigger asChild>
@@ -82,17 +91,26 @@ const JobStatus = () => {
                       <DialogHeader>
                         <DialogTitle className="text-strawberry-700">Job Details</DialogTitle>
                       </DialogHeader>
-                      <ScrollArea className="mt-4 h-[200px] rounded-md border p-4">
+                      <ScrollArea className="mt-4 h-[300px] rounded-md border p-4">
                         {selectedJob && (
                           <div className="space-y-2">
                             <p><strong>Job ID:</strong> {selectedJob.id}</p>
-                            <p><strong>Model:</strong> {selectedJob.model}</p>
+                            <p><strong>Model:</strong> {selectedJob.fine_tuned_model || selectedJob.model}</p>
                             <p><strong>Status:</strong> <span className={getStatusColor(selectedJob.status)}>{selectedJob.status}</span></p>
-                            <p><strong>Created At:</strong> {selectedJob.createdAt}</p>
-                            <p><strong>Completed At:</strong> {selectedJob.completedAt || 'N/A'}</p>
-                            <p><strong>Training File:</strong> {selectedJob.trainingFile}</p>
-                            <p><strong>Epochs:</strong> {selectedJob.epochs}</p>
-                            <p><strong>Batch Size:</strong> {selectedJob.batchSize}</p>
+                            <p><strong>Created At:</strong> {formatDate(selectedJob.created_at)}</p>
+                            <p><strong>Updated At:</strong> {formatDate(selectedJob.updated_at)}</p>
+                            <p><strong>Organization ID:</strong> {selectedJob.organization_id}</p>
+                            <p><strong>Training File:</strong> {selectedJob.training_file}</p>
+                            <p><strong>Validation File:</strong> {selectedJob.validation_file || 'N/A'}</p>
+                            {selectedJob.result_files && (
+                              <p><strong>Result Files:</strong> {selectedJob.result_files.join(', ')}</p>
+                            )}
+                            {selectedJob.trained_tokens && (
+                              <p><strong>Trained Tokens:</strong> {selectedJob.trained_tokens}</p>
+                            )}
+                            {selectedJob.error && (
+                              <p><strong>Error:</strong> {selectedJob.error.message}</p>
+                            )}
                           </div>
                         )}
                       </ScrollArea>
