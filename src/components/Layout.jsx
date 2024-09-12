@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { LayoutDashboard, Plus, ListOrdered, TestTube, Settings, HelpCircle, Menu } from "lucide-react";
+import { LayoutDashboard, Plus, ListOrdered, TestTube, Settings, HelpCircle, Menu, Lock } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -101,7 +101,7 @@ const Layout = ({ children }) => {
       </footer>
 
       <Dialog open={!isApiKeySaved}>
-        <DialogContent className="sm:max-w-[90%] md:max-w-[400px] bg-gradient-to-br from-pink-100 to-pink-200 rounded-lg shadow-lg m-4 sm:m-0">
+        <DialogContent className="sm:max-w-[90%] md:max-w-[350px] bg-gradient-to-br from-pink-100 to-pink-200 rounded-lg shadow-lg m-4 sm:m-0">
           <DialogHeader>
             <DialogTitle className="text-center">
               <span className="text-6xl">🍓</span>
@@ -128,9 +128,12 @@ const Layout = ({ children }) => {
           <Button onClick={handleSaveApiKey} className="w-full bg-red-500 hover:bg-red-600 text-white">
             {isSaving ? 'Saving...' : 'Save API Key'}
           </Button>
-          <p className="text-sm text-pink-700 mt-4">
-            Your API key is securely encrypted and stored locally in your browser. We never send or store your API key on our servers.
-          </p>
+          <div className="mt-4 text-center">
+            <Lock className="h-5 w-5 mx-auto text-pink-700 mb-2" />
+            <p className="text-sm text-pink-700">
+              Your API key is securely encrypted and stored locally in your browser. We never send or store your API key on our servers.
+            </p>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
