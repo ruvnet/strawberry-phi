@@ -21,27 +21,28 @@ const Settings = () => {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Settings</h1>
-      <Card>
+      <h1 className="text-2xl font-bold text-strawberry-800">Settings</h1>
+      <Card className="bg-white/50 backdrop-blur-sm border-strawberry-200">
         <CardHeader>
-          <CardTitle>API Key Management</CardTitle>
+          <CardTitle className="text-strawberry-700">API Key Management</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="apiKey">OpenAI API Key</Label>
+              <Label htmlFor="apiKey" className="text-strawberry-600">OpenAI API Key</Label>
               <div className="relative">
                 <Input
                   id="apiKey"
                   type={showApiKey ? 'text' : 'password'}
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
+                  className="border-strawberry-300 focus:border-strawberry-500 pr-10"
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-strawberry-500"
                   onClick={() => setShowApiKey(!showApiKey)}
                 >
                   {showApiKey ? (
@@ -52,7 +53,7 @@ const Settings = () => {
                 </Button>
               </div>
             </div>
-            <Button onClick={saveApiKey} disabled={isSaving}>
+            <Button onClick={saveApiKey} disabled={isSaving} className="bg-strawberry-500 hover:bg-strawberry-600 text-white">
               {isSaving ? 'Saving...' : 'Save API Key'}
             </Button>
           </div>

@@ -14,11 +14,11 @@ const ModelTesting = () => {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Model Testing</h1>
+      <h1 className="text-2xl font-bold text-strawberry-800">Model Testing</h1>
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+        <Card className="bg-white/50 backdrop-blur-sm border-strawberry-200">
           <CardHeader>
-            <CardTitle>Enter Prompt</CardTitle>
+            <CardTitle className="text-strawberry-700">Enter Prompt</CardTitle>
           </CardHeader>
           <CardContent>
             <Textarea
@@ -26,19 +26,20 @@ const ModelTesting = () => {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Enter your prompt here"
               rows={4}
+              className="border-strawberry-300 focus:border-strawberry-500"
             />
-            <Button onClick={testModel} className="mt-4">Test Model</Button>
+            <Button onClick={testModel} className="mt-4 bg-strawberry-500 hover:bg-strawberry-600 text-white">Test Model</Button>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-white/50 backdrop-blur-sm border-strawberry-200">
           <CardHeader>
-            <CardTitle>Model Response</CardTitle>
+            <CardTitle className="text-strawberry-700">Model Response</CardTitle>
           </CardHeader>
           <CardContent>
             {response ? (
-              <p>{response}</p>
+              <p className="text-strawberry-600">{response}</p>
             ) : (
-              <p>No response yet. Test the model to see results.</p>
+              <p className="text-strawberry-600">No response yet. Test the model to see results.</p>
             )}
           </CardContent>
         </Card>

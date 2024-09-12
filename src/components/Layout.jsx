@@ -18,7 +18,7 @@ const Layout = ({ children }) => {
   const Sidebar = () => (
     <div className="space-y-4 py-4">
       <div className="px-3 py-2">
-        <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+        <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight text-strawberry-700">
           🍓 Strawberry Phi
         </h2>
         <div className="space-y-1">
@@ -26,7 +26,7 @@ const Layout = ({ children }) => {
             <Button
               key={item.path}
               variant="ghost"
-              className="w-full justify-start"
+              className="w-full justify-start text-strawberry-600 hover:text-strawberry-800 hover:bg-strawberry-100"
               asChild
             >
               <Link to={item.path}>
@@ -41,29 +41,29 @@ const Layout = ({ children }) => {
   );
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <aside className="hidden w-64 overflow-y-auto border-r bg-gray-100/40 md:block">
+    <div className="flex h-screen overflow-hidden bg-strawberry-gradient">
+      <aside className="hidden w-64 overflow-y-auto border-r border-strawberry-200 bg-white/50 backdrop-blur-sm md:block">
         <Sidebar />
       </aside>
       <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex h-16 items-center justify-between border-b px-4 md:px-6">
+        <header className="flex h-16 items-center justify-between border-b border-strawberry-200 bg-white/50 backdrop-blur-sm px-4 md:px-6">
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button variant="ghost" size="icon" className="md:hidden text-strawberry-600">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-64 p-0">
+            <SheetContent side="left" className="w-64 p-0 bg-white/50 backdrop-blur-sm">
               <Sidebar />
             </SheetContent>
           </Sheet>
           <div className="flex items-center gap-4">
             <Link to="/" className="flex items-center gap-2">
-              <span className="text-lg font-bold">🍓 Strawberry Phi</span>
+              <span className="text-lg font-bold text-strawberry-700">🍓 Strawberry Phi</span>
             </Link>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-strawberry-gradient">{children}</main>
       </div>
     </div>
   );

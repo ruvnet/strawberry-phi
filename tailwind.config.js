@@ -51,6 +51,19 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        strawberry: {
+          50: "#fff0f5",
+          100: "#ffe0eb",
+          200: "#ffc1d7",
+          300: "#ff93b8",
+          400: "#ff5790",
+          500: "#ff2b6f",
+          600: "#ff0055",
+          700: "#dd0050",
+          800: "#b80050",
+          900: "#98044a",
+          950: "#5f0029",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -70,6 +83,9 @@ module.exports = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      backgroundImage: {
+        'strawberry-gradient': 'linear-gradient(to bottom right, #fff0f5, #ffe0eb, #ffc1d7)',
       },
     },
   },
