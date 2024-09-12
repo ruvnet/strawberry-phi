@@ -68,7 +68,7 @@ const Layout = ({ children }) => {
                 <Sidebar />
               </SheetContent>
             </Sheet>
-            <div className="flex items-center">
+            <div className="flex items-center md:hidden">
               <span className="text-sm font-medium text-pink-600">🍓 Strawberry Phi</span>
             </div>
           </header>
