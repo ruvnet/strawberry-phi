@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { LayoutDashboard, Plus, ListOrdered, TestTube, Settings, Menu } from "lucide-react";
+import { LayoutDashboard, Plus, ListOrdered, TestTube, Settings, HelpCircle, Menu } from "lucide-react";
 
 const navItems = [
   { title: 'Dashboard', icon: <LayoutDashboard className="h-4 w-4" />, path: '/' },
@@ -10,6 +10,7 @@ const navItems = [
   { title: 'Job Status', icon: <ListOrdered className="h-4 w-4" />, path: '/jobs' },
   { title: 'Model Testing', icon: <TestTube className="h-4 w-4" />, path: '/test' },
   { title: 'Settings', icon: <Settings className="h-4 w-4" />, path: '/settings' },
+  { title: 'Help', icon: <HelpCircle className="h-4 w-4" />, path: '/help' },
 ];
 
 const Layout = ({ children }) => {
