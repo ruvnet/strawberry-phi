@@ -101,7 +101,7 @@ const Layout = ({ children }) => {
       </footer>
 
       <Dialog open={!isApiKeySaved}>
-        <DialogContent className="sm:max-w-[425px] bg-gradient-to-br from-pink-100 to-pink-200 rounded-lg shadow-lg m-4 sm:m-0">
+        <DialogContent className="sm:max-w-[90%] md:max-w-[400px] bg-gradient-to-br from-pink-100 to-pink-200 rounded-lg shadow-lg m-4 sm:m-0">
           <DialogHeader>
             <DialogTitle className="text-center">
               <span className="text-6xl">🍓</span>
