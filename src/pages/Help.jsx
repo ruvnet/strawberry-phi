@@ -10,7 +10,7 @@ const Help = () => {
       <h1 className="text-2xl font-bold text-strawberry-800">Help</h1>
       <Card className="bg-white/50 backdrop-blur-sm border-strawberry-200">
         <CardHeader>
-          <CardTitle className="text-strawberry-700">Strawberry Phi Fine-tuning Documentation</CardTitle>
+          <CardTitle className="text-strawberry-700">OpenAI Fine-tuning Documentation</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="overview" className="w-full">
@@ -23,34 +23,21 @@ const Help = () => {
             </TabsList>
             <ScrollArea className="h-[60vh] mt-4 rounded-md border border-strawberry-200 p-4">
               <TabsContent value="overview">
-                <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Strawberry Phi: Reflection-Utilized Validation</h2>
+                <h2 className="text-xl font-semibold mb-2 text-strawberry-700">OpenAI Fine-tuning Application</h2>
                 <p className="text-strawberry-600 mb-4">
-                  Strawberry Phi is an advanced multi-modal, agentic AI assistant designed for complex task handling across various domains. Developed by rUv, it uses reflection-tuning techniques to self-evaluate and correct reasoning errors.
+                  This application provides a user-friendly interface for fine-tuning OpenAI's GPT models, specifically GPT-4o and GPT-4o-mini. It allows you to customize these powerful language models for your specific needs, enhancing their performance on domain-specific tasks.
                 </p>
                 <h3 className="text-lg font-semibold mb-2 text-strawberry-700">Key Features:</h3>
                 <ul className="list-disc list-inside space-y-2 text-strawberry-600">
-                  <li>Reflection: Emphasizes the model's core capability of self-reflection and self-correction.</li>
-                  <li>Utilized: Highlights the active use of reflection in improving the model's reasoning process.</li>
-                  <li>Validation: Signifies the model's ability to validate its reasoning, detect errors, and refine outputs for accuracy.</li>
-                  <li>Advanced methodologies: Sequential, concurrent, recurrent, and reinforcement learning approaches for task management, planning, and execution.</li>
-                  <li>Multi-modal inputs and outputs: Handles text, images, audio, and more.</li>
-                  <li>Dynamic adaptation to user requirements and continuous performance improvement.</li>
-                  <li>Integration of self-reflection mechanisms and Glaive's synthetic data generation for rapid fine-tuning and error minimization.</li>
+                  <li>Easy-to-use interface for creating and managing fine-tuning jobs</li>
+                  <li>Support for GPT-4o and GPT-4o-mini models</li>
+                  <li>Real-time job status monitoring and detailed logs</li>
+                  <li>Interactive model testing environment</li>
+                  <li>Secure API key management</li>
+                  <li>Customizable fine-tuning parameters</li>
                 </ul>
-                <h3 className="text-lg font-semibold mt-4 mb-2 text-strawberry-700">Reflection-Tuning Process:</h3>
-                <ol className="list-decimal list-inside space-y-2 text-strawberry-600">
-                  <li>Base Model: Starts with a pre-existing large language model (e.g., Meta's Llama 3.1-70B Instruct model).</li>
-                  <li>Special Tokens: Uses tokens like &lt;reasoning&gt;, &lt;reflection&gt;, &lt;correction&gt;, &lt;final_answer&gt; to structure thought processes.</li>
-                  <li>Reasoning Process: The model "thinks out loud" about the problem within specific tags.</li>
-                  <li>Self-Correction: Detects and corrects errors in its reasoning using reflection tags.</li>
-                  <li>Final Output: Provides the final answer after satisfactory reasoning and corrections.</li>
-                  <li>Synthetic Data Generation: Uses large datasets of synthetic data including reflection and correction processes.</li>
-                  <li>Training: Fine-tunes the base model on synthetic data, learning to mimic reflection and self-correction.</li>
-                  <li>Iterative Improvement: Applies the reflection process to various queries and scenarios through multiple training rounds.</li>
-                  <li>Evaluation and Refinement: Continuous testing and refinement of the training process and data generation.</li>
-                </ol>
                 <p className="text-strawberry-600 mt-4">
-                  This reflection-tuning technique represents a significant advancement in language model training, potentially reducing hallucinations and improving the overall reliability of AI-generated responses.
+                  This application streamlines the process of fine-tuning OpenAI models, making it accessible to both beginners and experienced users. It provides a comprehensive suite of tools for creating, monitoring, and testing custom language models tailored to your specific requirements.
                 </p>
               </TabsContent>
               <TabsContent value="finetune">
@@ -96,26 +83,38 @@ const Help = () => {
               <TabsContent value="jobstatus">
                 <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Job Status Monitoring</h2>
                 <p className="text-strawberry-600 mb-4">
-                  The Job Status page allows you to monitor and manage your fine-tuning jobs with OpenAI. 
-                  It provides real-time updates and detailed information about each job's progress.
+                  The Job Status page provides a comprehensive overview of all your fine-tuning jobs, allowing you to track progress, manage resources, and analyze results efficiently.
                 </p>
-                <h3 className="text-lg font-semibold mb-2 text-strawberry-700">Features:</h3>
+                <h3 className="text-lg font-semibold mb-2 text-strawberry-700">Key Features:</h3>
                 <ul className="list-disc list-inside space-y-2 text-strawberry-600">
                   <li>Real-time status updates for all fine-tuning jobs</li>
+                  <li>Detailed job information, including model type, creation date, and current status</li>
                   <li>Individual job refresh functionality for immediate status checks</li>
                   <li>"Refresh All" button to update all job statuses simultaneously</li>
-                  <li>Detailed job information view, including training metrics and error logs</li>
-                  <li>Pagination for managing multiple fine-tuning jobs efficiently</li>
-                  <li>Job cancellation and deletion options for better resource management</li>
-                  <li>Estimated completion time and resource usage statistics</li>
+                  <li>Pagination for easy navigation through multiple jobs</li>
+                  <li>Sorting and filtering options to quickly find specific jobs</li>
+                  <li>Detailed view for each job, including:
+                    <ul className="list-disc list-inside ml-4">
+                      <li>Training progress and metrics</li>
+                      <li>Error logs and warnings</li>
+                      <li>Resource usage statistics</li>
+                      <li>Estimated completion time</li>
+                    </ul>
+                  </li>
+                  <li>Options to pause, resume, or cancel ongoing jobs</li>
+                  <li>Download functionality for trained model files and training logs</li>
+                  <li>Integration with the Model Testing page for quick evaluation of completed models</li>
                 </ul>
+                <p className="text-strawberry-600 mt-4">
+                  The Job Status page is designed to give you full visibility and control over your fine-tuning processes. It helps you optimize resource allocation, troubleshoot issues quickly, and make data-driven decisions about your model development pipeline.
+                </p>
               </TabsContent>
               <TabsContent value="modeltesting">
                 <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Model Testing</h2>
                 <p className="text-strawberry-600 mb-4">
-                  The Model Testing page allows you to interact with your fine-tuned OpenAI models and evaluate their performance with custom prompts.
+                  The Model Testing page provides an interactive environment to evaluate and compare your fine-tuned models. It allows you to input custom prompts, adjust various parameters, and analyze model outputs in real-time.
                 </p>
-                <h3 className="text-lg font-semibold mb-2 text-strawberry-700">Features:</h3>
+                <h3 className="text-lg font-semibold mb-2 text-strawberry-700">Key Features:</h3>
                 <ul className="list-disc list-inside space-y-2 text-strawberry-600">
                   <li>Model selection from available fine-tuned OpenAI models</li>
                   <li>Custom prompt input for testing specific scenarios</li>
@@ -129,10 +128,32 @@ const Help = () => {
                     </ul>
                   </li>
                   <li>Real-time model response display with formatting options</li>
+                  <li>Side-by-side comparison tool to evaluate fine-tuned model against base model</li>
+                  <li>Performance metrics calculation and display:
+                    <ul className="list-disc list-inside ml-4">
+                      <li>Response time</li>
+                      <li>Token usage (prompt tokens, completion tokens, total tokens)</li>
+                      <li>Cost estimation based on current OpenAI pricing</li>
+                    </ul>
+                  </li>
                   <li>Option to view raw API response for detailed analysis</li>
-                  <li>Comparison tool to evaluate fine-tuned model against base model</li>
-                  <li>Performance metrics calculation (e.g., response time, token usage)</li>
+                  <li>History of test prompts and responses for easy reference and comparison</li>
+                  <li>Export functionality for test results in various formats (CSV, JSON)</li>
+                  <li>Integration with fine-tuning job creation for iterative model improvement</li>
                 </ul>
+                <p className="text-strawberry-600 mt-4">
+                  The Model Testing page is an essential tool for validating the performance of your fine-tuned models. It allows you to:
+                </p>
+                <ul className="list-disc list-inside space-y-2 text-strawberry-600">
+                  <li>Verify that the model has learned the desired behavior from the fine-tuning process</li>
+                  <li>Compare the performance of different fine-tuned versions of a model</li>
+                  <li>Identify areas where the model may need further improvement</li>
+                  <li>Generate examples and case studies for stakeholder presentations</li>
+                  <li>Experiment with different prompt engineering techniques to optimize model outputs</li>
+                </ul>
+                <p className="text-strawberry-600 mt-4">
+                  By providing a user-friendly interface for interacting with your models, the Model Testing page bridges the gap between development and practical application, ensuring that your fine-tuned models meet your specific requirements and performance standards.
+                </p>
               </TabsContent>
               <TabsContent value="settings">
                 <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Settings</h2>
