@@ -2,14 +2,46 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import ModelSelector from '../components/ModelSelector';
+import { useApiKeyStore } from '../stores/apiKey';
 
 const ModelTesting = () => {
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('');
+  const [selectedModel, setSelectedModel] = useState('');
+  const { getApiKey } = useApiKeyStore();
 
-  const testModel = () => {
-    // Simulated API call
-    setResponse('This is a sample response from the model.');
+  const testModel = async () => {
+    const apiKey = await getApiKey();
+    if (!apiKey) {
+      setResponse('API key not found. Please set your API key in the Settings page.');
+      return;
+    }
+
+    try {
+      const response = await fetch('https://api.openai.com/v1/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: selectedModel,
+          prompt: prompt,
+          max_tokens: 150,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setResponse(data.choices[0].text);
+    } catch (error) {
+      console.error('Error testing model:', error);
+      setResponse(`Error: ${error.message}`);
+    }
   };
 
   return (
@@ -18,9 +50,10 @@ const ModelTesting = () => {
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="bg-white/50 backdrop-blur-sm border-strawberry-200">
           <CardHeader>
-            <CardTitle className="text-strawberry-700">Enter Prompt</CardTitle>
+            <CardTitle className="text-strawberry-700">Select Model and Enter Prompt</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
+            <ModelSelector onModelSelect={setSelectedModel} />
             <Textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
@@ -28,7 +61,7 @@ const ModelTesting = () => {
               rows={4}
               className="border-strawberry-300 focus:border-strawberry-500"
             />
-            <Button onClick={testModel} className="mt-4 bg-strawberry-500 hover:bg-strawberry-600 text-white">Test Model</Button>
+            <Button onClick={testModel} className="mt-4 bg-strawberry-500 hover:bg-strawberry-600 text-white" disabled={!selectedModel}>Test Model</Button>
           </CardContent>
         </Card>
         <Card className="bg-white/50 backdrop-blur-sm border-strawberry-200">
@@ -37,7 +70,7 @@ const ModelTesting = () => {
           </CardHeader>
           <CardContent>
             {response ? (
-              <p className="text-strawberry-600">{response}</p>
+              <p className="text-strawberry-600 whitespace-pre-wrap">{response}</p>
             ) : (
               <p className="text-strawberry-600">No response yet. Test the model to see results.</p>
             )}
