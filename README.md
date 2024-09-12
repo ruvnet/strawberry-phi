@@ -3,7 +3,7 @@
 
 Strawberry Phi is a fine-tuning application for OpenAI's GPT models. The purpose of this project is to provide an easy-to-use interface for creating custom models tailored to specific needs. The goal is to enable users to fine-tune GPT models with their own data, resulting in models that perform better on their unique tasks.
 
-**URL**: https://strawberry-phi.gptengineer.run
+**Demo**: https://strawberry-phi.gptengineer.run
 
 
 ## Technical Details
