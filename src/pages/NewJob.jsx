@@ -10,6 +10,9 @@ import { useToast } from "@/components/ui/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useApiKey } from '../contexts/ApiKeyContext';
 import { createFineTuningJob } from '../utils/openaiApi';
+import FileUploadSection from '../components/FileUploadSection';
+import ParameterSection from '../components/ParameterSection';
+import JsonDisplay from '../components/JsonDisplay';
 
 const NewJob = () => {
   const [activeTab, setActiveTab] = useState("upload");
@@ -32,22 +35,6 @@ const NewJob = () => {
         .catch(error => console.error('Error loading pre-existing file:', error));
     }
   }, [usePreExistingFile]);
-
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-    
-    if (selectedFile) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const content = event.target.result;
-        setJsonContent(content);
-        // Save to local storage
-        localStorage.setItem('uploadedJsonFile', content);
-      };
-      reader.readAsText(selectedFile);
-    }
-  };
 
   const handleSubmit = async () => {
     setIsLoading(true);
@@ -92,34 +79,15 @@ const NewJob = () => {
         <Card className="mt-4 bg-white/50 backdrop-blur-sm border-strawberry-200">
           <CardContent className="pt-6">
             <TabsContent value="upload">
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="fileSource" className="text-strawberry-600">File Source</Label>
-                  <RadioGroup defaultValue={usePreExistingFile ? "preExisting" : "upload"} onValueChange={(value) => setUsePreExistingFile(value === "preExisting")}>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="upload" id="upload" />
-                      <Label htmlFor="upload">Upload new file</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="preExisting" id="preExisting" />
-                      <Label htmlFor="preExisting">Use pre-existing file (strawberry-phi.jsonl)</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-                {!usePreExistingFile && (
-                  <div>
-                    <Label htmlFor="file" className="text-strawberry-600">Upload JSONL File</Label>
-                    <Input id="file" type="file" accept=".jsonl" onChange={handleFileChange} className="border-strawberry-300 focus:border-strawberry-500" />
-                  </div>
-                )}
-                <Textarea
-                  className="mt-2 text-strawberry-600 h-48"
-                  value={jsonContent}
-                  readOnly
-                  placeholder={usePreExistingFile ? "Loading pre-existing file content..." : "Upload a file to see its content here"}
-                />
-                <Button onClick={() => setActiveTab("model")} disabled={!file && !usePreExistingFile} className="bg-strawberry-500 hover:bg-strawberry-600 text-white">Continue</Button>
-              </div>
+              <FileUploadSection
+                usePreExistingFile={usePreExistingFile}
+                setUsePreExistingFile={setUsePreExistingFile}
+                file={file}
+                setFile={setFile}
+                jsonContent={jsonContent}
+                setJsonContent={setJsonContent}
+              />
+              <Button onClick={() => setActiveTab("model")} disabled={!file && !usePreExistingFile} className="bg-strawberry-500 hover:bg-strawberry-600 text-white mt-4">Continue</Button>
             </TabsContent>
             <TabsContent value="model">
               <div className="space-y-4">
@@ -146,60 +114,19 @@ const NewJob = () => {
               </div>
             </TabsContent>
             <TabsContent value="configure">
-              <div className="space-y-4">
-                <Label htmlFor="learningRate" className="text-strawberry-600">Learning Rate</Label>
-                <Input
-                  id="learningRate"
-                  type="number"
-                  value={learningRate}
-                  onChange={(e) => setLearningRate(e.target.value)}
-                  min="0.00001"
-                  max="0.1"
-                  step="0.00001"
-                  className="border-strawberry-300 focus:border-strawberry-500"
-                />
-                <Textarea
-                  className="mt-2 text-strawberry-600"
-                  readOnly
-                  value="The learning rate determines how quickly the model adapts to the new data. A typical range is between 0.00001 and 0.1. Lower values result in slower learning but can lead to better convergence."
-                />
-                <Label htmlFor="epochs" className="text-strawberry-600">Epochs</Label>
-                <Input
-                  id="epochs"
-                  type="number"
-                  value={epochs}
-                  onChange={(e) => setEpochs(e.target.value)}
-                  min="1"
-                  max="10"
-                  className="border-strawberry-300 focus:border-strawberry-500"
-                />
-                <Textarea
-                  className="mt-2 text-strawberry-600"
-                  readOnly
-                  value="Epochs represent the number of times the model will cycle through the entire dataset. More epochs can lead to better learning but may also result in overfitting. A typical range is 1-5 epochs."
-                />
-                <Label htmlFor="batchSize" className="text-strawberry-600">Batch Size</Label>
-                <Select value={batchSize} onValueChange={setBatchSize}>
-                  <SelectTrigger id="batchSize" className="border-strawberry-300 focus:border-strawberry-500">
-                    <SelectValue placeholder="Select batch size" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="8">8</SelectItem>
-                    <SelectItem value="16">16</SelectItem>
-                    <SelectItem value="32">32</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Textarea
-                  className="mt-2 text-strawberry-600"
-                  readOnly
-                  value="Batch size determines how many examples the model processes before updating its parameters. Larger batch sizes can lead to faster training but may require more memory. Common values are 8, 16, or 32."
-                />
-                <div className="space-x-2">
-                  <Button onClick={() => setActiveTab("model")} variant="outline" className="border-strawberry-300 text-strawberry-600">Back</Button>
-                  <Button onClick={handleSubmit} disabled={isLoading} className="bg-strawberry-500 hover:bg-strawberry-600 text-white">
-                    {isLoading ? 'Creating Job...' : 'Start Job'}
-                  </Button>
-                </div>
+              <ParameterSection
+                learningRate={learningRate}
+                setLearningRate={setLearningRate}
+                epochs={epochs}
+                setEpochs={setEpochs}
+                batchSize={batchSize}
+                setBatchSize={setBatchSize}
+              />
+              <div className="space-x-2 mt-4">
+                <Button onClick={() => setActiveTab("model")} variant="outline" className="border-strawberry-300 text-strawberry-600">Back</Button>
+                <Button onClick={handleSubmit} disabled={isLoading} className="bg-strawberry-500 hover:bg-strawberry-600 text-white">
+                  {isLoading ? 'Creating Job...' : 'Start Job'}
+                </Button>
               </div>
             </TabsContent>
           </CardContent>
