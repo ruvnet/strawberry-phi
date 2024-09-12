@@ -3,30 +3,35 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { useApiKey } from '../contexts/ApiKeyContext';
-import { fetchJobs } from '../utils/openaiApi';
+import { fetchJobs, fetchJobStatus } from '../utils/openaiApi';
 
 const JobStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedJob, setSelectedJob] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [totalJobs, setTotalJobs] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const { apiKey } = useApiKey();
   const jobsPerPage = 5;
 
-  useEffect(() => {
-    const loadJobs = async () => {
-      if (apiKey) {
-        try {
-          const response = await fetchJobs(apiKey, currentPage, jobsPerPage);
-          setJobs(response.data);
-          setTotalJobs(response.total);
-        } catch (error) {
-          console.error('Error fetching jobs:', error);
-        }
+  const loadJobs = async () => {
+    if (apiKey) {
+      setIsLoading(true);
+      try {
+        const response = await fetchJobs(apiKey, currentPage, jobsPerPage);
+        setJobs(response.data);
+        setTotalJobs(response.total);
+      } catch (error) {
+        console.error('Error fetching jobs:', error);
+      } finally {
+        setIsLoading(false);
       }
-    };
+    }
+  };
+
+  useEffect(() => {
     loadJobs();
   }, [apiKey, currentPage]);
 
@@ -38,6 +43,17 @@ const JobStatus = () => {
 
   const prevPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const refreshJobStatus = async (jobId) => {
+    if (apiKey) {
+      try {
+        const updatedJob = await fetchJobStatus(apiKey, jobId);
+        setJobs(jobs.map(job => job.id === jobId ? updatedJob : job));
+      } catch (error) {
+        console.error('Error refreshing job status:', error);
+      }
+    }
   };
 
   const getStatusColor = (status) => {
@@ -64,7 +80,7 @@ const JobStatus = () => {
       <h1 className="text-2xl font-bold text-strawberry-800">Job Status</h1>
       <p className="text-strawberry-600 mb-6">
         Monitor and manage your fine-tuning jobs here. This page displays all your current and past fine-tuning tasks,
-        allowing you to track progress, view details, and manage your custom models efficiently.
+        allowing you to track progress, view details, and manage your custom models efficiently. You can refresh the status of individual jobs to get real-time updates.
       </p>
       <div className="bg-white/50 backdrop-blur-sm rounded-lg border border-strawberry-200 overflow-hidden">
         <Table>
@@ -85,41 +101,46 @@ const JobStatus = () => {
                 <TableCell className={`font-semibold ${getStatusColor(job.status)}`}>{job.status}</TableCell>
                 <TableCell className="text-strawberry-600">{formatDate(job.created_at)}</TableCell>
                 <TableCell>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm" onClick={() => setSelectedJob(job)}>
-                        View Details
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle className="text-strawberry-700">Job Details</DialogTitle>
-                      </DialogHeader>
-                      <ScrollArea className="mt-4 h-[300px] rounded-md border p-4">
-                        {selectedJob && (
-                          <div className="space-y-2">
-                            <p><strong>Job ID:</strong> {selectedJob.id}</p>
-                            <p><strong>Model:</strong> {selectedJob.fine_tuned_model || selectedJob.model}</p>
-                            <p><strong>Status:</strong> <span className={getStatusColor(selectedJob.status)}>{selectedJob.status}</span></p>
-                            <p><strong>Created At:</strong> {formatDate(selectedJob.created_at)}</p>
-                            <p><strong>Updated At:</strong> {formatDate(selectedJob.updated_at)}</p>
-                            <p><strong>Organization ID:</strong> {selectedJob.organization_id}</p>
-                            <p><strong>Training File:</strong> {selectedJob.training_file}</p>
-                            <p><strong>Validation File:</strong> {selectedJob.validation_file || 'N/A'}</p>
-                            {selectedJob.result_files && (
-                              <p><strong>Result Files:</strong> {selectedJob.result_files.join(', ')}</p>
-                            )}
-                            {selectedJob.trained_tokens && (
-                              <p><strong>Trained Tokens:</strong> {selectedJob.trained_tokens}</p>
-                            )}
-                            {selectedJob.error && (
-                              <p><strong>Error:</strong> {selectedJob.error.message}</p>
-                            )}
-                          </div>
-                        )}
-                      </ScrollArea>
-                    </DialogContent>
-                  </Dialog>
+                  <div className="flex space-x-2">
+                    <Button variant="outline" size="sm" onClick={() => refreshJobStatus(job.id)}>
+                      <RefreshCw className="h-4 w-4 mr-1" /> Refresh
+                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm" onClick={() => setSelectedJob(job)}>
+                          View Details
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle className="text-strawberry-700">Job Details</DialogTitle>
+                        </DialogHeader>
+                        <ScrollArea className="mt-4 h-[300px] rounded-md border p-4">
+                          {selectedJob && (
+                            <div className="space-y-2">
+                              <p><strong>Job ID:</strong> {selectedJob.id}</p>
+                              <p><strong>Model:</strong> {selectedJob.fine_tuned_model || selectedJob.model}</p>
+                              <p><strong>Status:</strong> <span className={getStatusColor(selectedJob.status)}>{selectedJob.status}</span></p>
+                              <p><strong>Created At:</strong> {formatDate(selectedJob.created_at)}</p>
+                              <p><strong>Updated At:</strong> {formatDate(selectedJob.updated_at)}</p>
+                              <p><strong>Organization ID:</strong> {selectedJob.organization_id}</p>
+                              <p><strong>Training File:</strong> {selectedJob.training_file}</p>
+                              <p><strong>Validation File:</strong> {selectedJob.validation_file || 'N/A'}</p>
+                              {selectedJob.result_files && (
+                                <p><strong>Result Files:</strong> {selectedJob.result_files.join(', ')}</p>
+                              )}
+                              {selectedJob.trained_tokens && (
+                                <p><strong>Trained Tokens:</strong> {selectedJob.trained_tokens}</p>
+                              )}
+                              {selectedJob.error && (
+                                <p><strong>Error:</strong> {selectedJob.error.message}</p>
+                              )}
+                            </div>
+                          )}
+                        </ScrollArea>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

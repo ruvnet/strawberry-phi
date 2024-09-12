@@ -39,3 +39,18 @@ export const createFineTuningJob = async (apiKey, formData) => {
     throw error;
   }
 };
+
+export const fetchJobStatus = async (apiKey, jobId) => {
+  try {
+    const response = await axios.get(`${OPENAI_API_URL}/fine-tunes/${jobId}`, {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching job status from OpenAI:', error);
+    throw error;
+  }
+};
