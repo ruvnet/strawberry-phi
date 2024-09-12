@@ -10,7 +10,7 @@ const Help = () => {
       <h1 className="text-2xl font-bold text-strawberry-800">Help</h1>
       <Card className="bg-white/50 backdrop-blur-sm border-strawberry-200">
         <CardHeader>
-          <CardTitle className="text-strawberry-700">OpenAI Fine-tuning Documentation</CardTitle>
+          <CardTitle className="text-strawberry-700">Strawberry Phi Fine-tuning Documentation</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="overview" className="w-full">
@@ -23,22 +23,35 @@ const Help = () => {
             </TabsList>
             <ScrollArea className="h-[60vh] mt-4 rounded-md border border-strawberry-200 p-4">
               <TabsContent value="overview">
-                <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Fine-tuning OpenAI Models: GPT-4o and GPT-4o-mini</h2>
+                <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Strawberry Phi: Reflection-Utilized Validation</h2>
                 <p className="text-strawberry-600 mb-4">
-                  Our application provides a user-friendly interface for fine-tuning OpenAI's GPT-4o and GPT-4o-mini models. 
-                  It offers customization options to adapt these powerful language models for specific tasks and domains, 
-                  leveraging OpenAI's advanced AI capabilities.
+                  Strawberry Phi is an advanced multi-modal, agentic AI assistant designed for complex task handling across various domains. Developed by rUv, it uses reflection-tuning techniques to self-evaluate and correct reasoning errors.
                 </p>
                 <h3 className="text-lg font-semibold mb-2 text-strawberry-700">Key Features:</h3>
                 <ul className="list-disc list-inside space-y-2 text-strawberry-600">
-                  <li>Fine-tuning capabilities for OpenAI's GPT-4o and GPT-4o-mini models</li>
-                  <li>User-friendly interface for uploading and managing training data</li>
-                  <li>Customizable fine-tuning parameters to optimize model performance</li>
-                  <li>Real-time job monitoring and status updates</li>
-                  <li>Model testing interface for immediate results and performance evaluation</li>
-                  <li>Secure API key management for OpenAI integration</li>
-                  <li>Comprehensive documentation and guidance throughout the fine-tuning process</li>
+                  <li>Reflection: Emphasizes the model's core capability of self-reflection and self-correction.</li>
+                  <li>Utilized: Highlights the active use of reflection in improving the model's reasoning process.</li>
+                  <li>Validation: Signifies the model's ability to validate its reasoning, detect errors, and refine outputs for accuracy.</li>
+                  <li>Advanced methodologies: Sequential, concurrent, recurrent, and reinforcement learning approaches for task management, planning, and execution.</li>
+                  <li>Multi-modal inputs and outputs: Handles text, images, audio, and more.</li>
+                  <li>Dynamic adaptation to user requirements and continuous performance improvement.</li>
+                  <li>Integration of self-reflection mechanisms and Glaive's synthetic data generation for rapid fine-tuning and error minimization.</li>
                 </ul>
+                <h3 className="text-lg font-semibold mt-4 mb-2 text-strawberry-700">Reflection-Tuning Process:</h3>
+                <ol className="list-decimal list-inside space-y-2 text-strawberry-600">
+                  <li>Base Model: Starts with a pre-existing large language model (e.g., Meta's Llama 3.1-70B Instruct model).</li>
+                  <li>Special Tokens: Uses tokens like &lt;reasoning&gt;, &lt;reflection&gt;, &lt;correction&gt;, &lt;final_answer&gt; to structure thought processes.</li>
+                  <li>Reasoning Process: The model "thinks out loud" about the problem within specific tags.</li>
+                  <li>Self-Correction: Detects and corrects errors in its reasoning using reflection tags.</li>
+                  <li>Final Output: Provides the final answer after satisfactory reasoning and corrections.</li>
+                  <li>Synthetic Data Generation: Uses large datasets of synthetic data including reflection and correction processes.</li>
+                  <li>Training: Fine-tunes the base model on synthetic data, learning to mimic reflection and self-correction.</li>
+                  <li>Iterative Improvement: Applies the reflection process to various queries and scenarios through multiple training rounds.</li>
+                  <li>Evaluation and Refinement: Continuous testing and refinement of the training process and data generation.</li>
+                </ol>
+                <p className="text-strawberry-600 mt-4">
+                  This reflection-tuning technique represents a significant advancement in language model training, potentially reducing hallucinations and improving the overall reliability of AI-generated responses.
+                </p>
               </TabsContent>
               <TabsContent value="finetune">
                 <h2 className="text-xl font-semibold mb-2 text-strawberry-700">Fine-tuning Process</h2>
