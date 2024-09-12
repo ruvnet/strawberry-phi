@@ -21,7 +21,7 @@ const Layout = ({ children }) => {
     <div className="space-y-4 py-4">
       <div className="px-3 py-2">
         <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight text-pink-700">
-          🍓 Strawberry Phi
+          Menu
         </h2>
         <div className="space-y-1">
           {navItems.map((item) => (
@@ -61,9 +61,7 @@ const Layout = ({ children }) => {
               </SheetContent>
             </Sheet>
             <div className="flex items-center gap-4">
-              <Link to="/" className="flex items-center gap-2">
-                <span className="text-lg font-bold text-pink-700">🍓 Strawberry Phi</span>
-              </Link>
+              <span className="text-lg font-bold text-pink-700">🍓 Strawberry Phi</span>
             </div>
             <div className="flex items-center">
               <span className="text-sm font-medium text-pink-600">Fine-tune OpenAI models with ease</span>
