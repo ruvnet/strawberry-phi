@@ -62,6 +62,10 @@ const JobStatus = () => {
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold text-strawberry-800">Job Status</h1>
+      <p className="text-strawberry-600 mb-6">
+        Monitor and manage your fine-tuning jobs here. This page displays all your current and past fine-tuning tasks,
+        allowing you to track progress, view details, and manage your custom models efficiently.
+      </p>
       <div className="bg-white/50 backdrop-blur-sm rounded-lg border border-strawberry-200 overflow-hidden">
         <Table>
           <TableHeader>
