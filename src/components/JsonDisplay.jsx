@@ -2,7 +2,26 @@ import React from 'react';
 import { Textarea } from "@/components/ui/textarea";
 
 const JsonDisplay = ({ jsonContent }) => {
-  const formattedJson = jsonContent ? JSON.stringify(JSON.parse(jsonContent), null, 2) : '';
+  const formatJson = (content) => {
+    if (!content) return '';
+    try {
+      // First, try to parse it as JSON
+      const parsed = JSON.parse(content);
+      return JSON.stringify(parsed, null, 2);
+    } catch (error) {
+      // If parsing fails, it might be JSONL, so we'll format it line by line
+      return content.split('\n').map(line => {
+        try {
+          return JSON.stringify(JSON.parse(line), null, 2);
+        } catch (e) {
+          // If individual line parsing fails, return the original line
+          return line;
+        }
+      }).join('\n');
+    }
+  };
+
+  const formattedJson = formatJson(jsonContent);
 
   return (
     <Textarea
