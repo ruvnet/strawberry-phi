@@ -65,7 +65,17 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold text-strawberry-800">Dashboard</h1>
+      <div className="bg-gradient-to-r from-pink-500 to-red-500 text-white p-6 rounded-lg shadow-md">
+        <h1 className="text-4xl font-bold mb-2">Welcome to Strawberry Phi</h1>
+        <p className="text-lg mb-4">Fine-tune OpenAI models with ease and efficiency.</p>
+        <ul className="list-disc list-inside">
+          <li>Easy-to-use interface for fine-tuning GPT models</li>
+          <li>Custom models tailored to specific needs</li>
+          <li>Improved performance on unique tasks</li>
+          <li>Real-time job status updates</li>
+          <li>Secure API key management</li>
+        </ul>
+      </div>
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="bg-white/50 backdrop-blur-sm border-strawberry-200">
           <CardHeader>
@@ -83,6 +93,35 @@ const Dashboard = () => {
             {renderJobList(recentJobs)}
           </CardContent>
         </Card>
+      </div>
+      <div className="bg-white/50 backdrop-blur-sm border-strawberry-200 p-6 rounded-lg shadow-md mt-6">
+        <h2 className="text-2xl font-bold text-strawberry-800 mb-4">Features, Benefits, and Capabilities</h2>
+        <p className="text-strawberry-600 mb-4">
+          Strawberry Phi is a fine-tuning application for OpenAI's GPT models. The purpose of this project is to provide an easy-to-use interface for creating custom models tailored to specific needs. The goal is to enable users to fine-tune GPT models with their own data, resulting in models that perform better on their unique tasks.
+        </p>
+        <h3 className="text-xl font-semibold text-strawberry-700 mb-2">Benefits</h3>
+        <ul className="list-disc list-inside text-strawberry-600 mb-4">
+          <li>Easy-to-use interface for fine-tuning GPT models</li>
+          <li>Custom models tailored to specific needs</li>
+          <li>Improved performance on unique tasks</li>
+        </ul>
+        <h3 className="text-xl font-semibold text-strawberry-700 mb-2">Features</h3>
+        <ul className="list-disc list-inside text-strawberry-600 mb-4">
+          <li>File upload and validation</li>
+          <li>Model selection and configuration</li>
+          <li>Fine-tuning job management</li>
+          <li>Model testing with custom prompts</li>
+          <li>Real-time job status updates</li>
+          <li>Secure API key management</li>
+        </ul>
+        <h3 className="text-xl font-semibold text-strawberry-700 mb-2">Capabilities</h3>
+        <ul className="list-disc list-inside text-strawberry-600">
+          <li>Side-by-side model comparison</li>
+          <li>Export test results in CSV or JSON format</li>
+          <li>Customizable model testing parameters</li>
+          <li>Detailed response analysis</li>
+          <li>Secure storage and encryption of API keys</li>
+        </ul>
       </div>
     </div>
   );
