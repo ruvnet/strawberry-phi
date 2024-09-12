@@ -7,7 +7,7 @@
         Strawberry Phi
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon to="/settings">
+      <v-btn icon>
         <v-icon>mdi-cog</v-icon>
       </v-btn>
     </v-app-bar>
@@ -37,12 +37,6 @@
             <v-icon>mdi-test-tube</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Model Testing</v-list-item-title>
-        </v-list-item>
-        <v-list-item to="/settings" link>
-          <v-list-item-icon>
-            <v-icon>mdi-cog</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>Settings</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
