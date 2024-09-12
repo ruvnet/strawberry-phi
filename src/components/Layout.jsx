@@ -65,6 +65,9 @@ const Layout = ({ children }) => {
                 <span className="text-lg font-bold text-pink-700">🍓 Strawberry Phi</span>
               </Link>
             </div>
+            <div className="flex items-center">
+              <span className="text-sm font-medium text-pink-600">Fine-tune OpenAI models with ease</span>
+            </div>
           </header>
           <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-pink-50 to-pink-100">
             <div className="mb-6 text-center">
