@@ -56,6 +56,18 @@ const JobStatus = () => {
     }
   };
 
+  const refreshAllJobs = async () => {
+    setIsLoading(true);
+    try {
+      const updatedJobs = await Promise.all(jobs.map(job => fetchJobStatus(apiKey, job.id)));
+      setJobs(updatedJobs);
+    } catch (error) {
+      console.error('Error refreshing all job statuses:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'succeeded':
@@ -77,10 +89,15 @@ const JobStatus = () => {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold text-strawberry-800">Job Status</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-strawberry-800">Job Status</h1>
+        <Button onClick={refreshAllJobs} disabled={isLoading} className="bg-strawberry-500 hover:bg-strawberry-600 text-white">
+          <RefreshCw className="mr-2 h-4 w-4" /> Refresh All
+        </Button>
+      </div>
       <p className="text-strawberry-600 mb-6">
         Monitor and manage your fine-tuning jobs here. This page displays all your current and past fine-tuning tasks,
-        allowing you to track progress, view details, and manage your custom models efficiently. You can refresh the status of individual jobs to get real-time updates.
+        allowing you to track progress, view details, and manage your custom models efficiently. You can refresh the status of individual jobs or all jobs at once to get real-time updates.
       </p>
       <div className="bg-white/50 backdrop-blur-sm rounded-lg border border-strawberry-200 overflow-hidden">
         <Table>
