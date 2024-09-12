@@ -57,63 +57,17 @@ const ModelTesting = () => {
     }
   };
 
-  const renderModelOptions = () => (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="temperature">Temperature: {temperature}</Label>
-        <Slider
-          id="temperature"
-          min={0}
-          max={1}
-          step={0.1}
-          value={[temperature]}
-          onValueChange={(value) => setTemperature(value[0])}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="maxTokens">Max Tokens: {maxTokens}</Label>
-        <Slider
-          id="maxTokens"
-          min={1}
-          max={2048}
-          step={1}
-          value={[maxTokens]}
-          onValueChange={(value) => setMaxTokens(value[0])}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="topP">Top P: {topP}</Label>
-        <Slider
-          id="topP"
-          min={0}
-          max={1}
-          step={0.1}
-          value={[topP]}
-          onValueChange={(value) => setTopP(value[0])}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="frequencyPenalty">Frequency Penalty: {frequencyPenalty}</Label>
-        <Slider
-          id="frequencyPenalty"
-          min={-2}
-          max={2}
-          step={0.1}
-          value={[frequencyPenalty]}
-          onValueChange={(value) => setFrequencyPenalty(value[0])}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="presencePenalty">Presence Penalty: {presencePenalty}</Label>
-        <Slider
-          id="presencePenalty"
-          min={-2}
-          max={2}
-          step={0.1}
-          value={[presencePenalty]}
-          onValueChange={(value) => setPresencePenalty(value[0])}
-        />
-      </div>
+  const renderSlider = (label, value, setValue, min, max, step) => (
+    <div className="space-y-2">
+      <Label htmlFor={label}>{label}: {value}</Label>
+      <Slider
+        id={label}
+        min={min}
+        max={max}
+        step={step}
+        value={[value]}
+        onValueChange={(value) => setValue(value[0])}
+      />
     </div>
   );
 
@@ -123,26 +77,32 @@ const ModelTesting = () => {
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="bg-white/50 backdrop-blur-sm border-strawberry-200">
           <CardHeader>
-            <CardTitle className="text-strawberry-700">Select Model and Enter Prompt</CardTitle>
+            <CardTitle className="text-strawberry-700">Select Model and Configure Parameters</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Tabs defaultValue="gpt4">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="gpt4">GPT-4</TabsTrigger>
-                <TabsTrigger value="gpt3">GPT-3.5</TabsTrigger>
-                <TabsTrigger value="other">Other</TabsTrigger>
+            <ModelSelector onModelSelect={setSelectedModel} />
+            <Tabs defaultValue="temperature" className="w-full">
+              <TabsList className="grid w-full grid-cols-5 bg-pink-100">
+                <TabsTrigger value="temperature" className="bg-pink-100 data-[state=active]:bg-pink-200">Temperature</TabsTrigger>
+                <TabsTrigger value="maxTokens" className="bg-pink-100 data-[state=active]:bg-pink-200">Max Tokens</TabsTrigger>
+                <TabsTrigger value="topP" className="bg-pink-100 data-[state=active]:bg-pink-200">Top P</TabsTrigger>
+                <TabsTrigger value="frequencyPenalty" className="bg-pink-100 data-[state=active]:bg-pink-200">Frequency Penalty</TabsTrigger>
+                <TabsTrigger value="presencePenalty" className="bg-pink-100 data-[state=active]:bg-pink-200">Presence Penalty</TabsTrigger>
               </TabsList>
-              <TabsContent value="gpt4">
-                <ModelSelector onModelSelect={setSelectedModel} modelPrefix="gpt-4" />
-                {renderModelOptions()}
+              <TabsContent value="temperature">
+                {renderSlider("Temperature", temperature, setTemperature, 0, 1, 0.1)}
               </TabsContent>
-              <TabsContent value="gpt3">
-                <ModelSelector onModelSelect={setSelectedModel} modelPrefix="gpt-3.5-turbo" />
-                {renderModelOptions()}
+              <TabsContent value="maxTokens">
+                {renderSlider("Max Tokens", maxTokens, setMaxTokens, 1, 2048, 1)}
               </TabsContent>
-              <TabsContent value="other">
-                <ModelSelector onModelSelect={setSelectedModel} />
-                {renderModelOptions()}
+              <TabsContent value="topP">
+                {renderSlider("Top P", topP, setTopP, 0, 1, 0.1)}
+              </TabsContent>
+              <TabsContent value="frequencyPenalty">
+                {renderSlider("Frequency Penalty", frequencyPenalty, setFrequencyPenalty, -2, 2, 0.1)}
+              </TabsContent>
+              <TabsContent value="presencePenalty">
+                {renderSlider("Presence Penalty", presencePenalty, setPresencePenalty, -2, 2, 0.1)}
               </TabsContent>
             </Tabs>
             <Textarea
