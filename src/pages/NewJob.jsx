@@ -24,15 +24,8 @@ const NewJob = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [jsonContent, setJsonContent] = useState('');
   const [usePreExistingFile, setUsePreExistingFile] = useState(false);
-  const [useDefaultGuidance, setUseDefaultGuidance] = useState(false);
   const { apiKey } = useApiKey();
   const { toast } = useToast();
-
-  const DEFAULT_GUIDANCE_PROMPT = `Generate a diverse set of user requests for an advanced AI assistant. 
-Requests should cover various domains such as marketing, finance, technology, 
-healthcare, education, and more. Each request should be a complex task that 
-an executive or professional might ask, requiring detailed analysis, planning, 
-or creative solutions.`;
 
   useEffect(() => {
     const storedData = localStorage.getItem('trainingData');
@@ -60,9 +53,6 @@ or creative solutions.`;
       formData.append('learning_rate', learningRate);
       formData.append('epochs', epochs);
       formData.append('batch_size', batchSize);
-      if (useDefaultGuidance) {
-        formData.append('guidance_prompt', DEFAULT_GUIDANCE_PROMPT);
-      }
 
       const response = await createFineTuningJob(apiKey, formData);
       toast({
@@ -105,27 +95,7 @@ or creative solutions.`;
                 jsonContent={jsonContent}
                 setJsonContent={setJsonContent}
               />
-              <div className="mt-4">
-                <Label htmlFor="useDefaultGuidance" className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="useDefaultGuidance"
-                    checked={useDefaultGuidance}
-                    onChange={(e) => setUseDefaultGuidance(e.target.checked)}
-                    className="form-checkbox h-5 w-5 text-strawberry-600"
-                  />
-                  <span>Use default guidance prompt</span>
-                </Label>
-                {useDefaultGuidance && (
-                  <Textarea
-                    value={DEFAULT_GUIDANCE_PROMPT}
-                    readOnly
-                    className="mt-2 bg-gray-100"
-                    rows={6}
-                  />
-                )}
-              </div>
-              <Button onClick={() => setActiveTab("model")} disabled={!file && !usePreExistingFile && !useDefaultGuidance} className="bg-strawberry-500 hover:bg-strawberry-600 text-white mt-4">Continue</Button>
+              <Button onClick={() => setActiveTab("model")} disabled={!file && !usePreExistingFile} className="bg-strawberry-500 hover:bg-strawberry-600 text-white mt-4">Continue</Button>
             </TabsContent>
             <TabsContent value="model">
               <ModelSelection model={model} setModel={setModel} />
