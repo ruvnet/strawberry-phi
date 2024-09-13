@@ -22,7 +22,7 @@ const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const [showApiKeyModal, setShowApiKeyModal] = useState(true);
+  const [modalDismissed, setModalDismissed] = useState(false);
   const { isApiKeySaved, setApiKey } = useApiKey();
 
   const handleNavigation = (path) => {
@@ -34,11 +34,11 @@ const Layout = ({ children }) => {
     await setApiKey(apiKeyInput);
     setIsSaving(false);
     setApiKeyInput('');
-    setShowApiKeyModal(false);
+    setModalDismissed(true);
   };
 
   const handleCloseModal = () => {
-    setShowApiKeyModal(false);
+    setModalDismissed(true);
   };
 
   const Sidebar = () => (
@@ -106,7 +106,7 @@ const Layout = ({ children }) => {
         </p>
       </footer>
 
-      <Dialog open={!isApiKeySaved && showApiKeyModal}>
+      <Dialog open={!isApiKeySaved && !modalDismissed}>
         <DialogContent className="sm:max-w-[300px] md:max-w-[350px] bg-gradient-to-br from-pink-100 to-pink-200 rounded-lg shadow-lg m-0">
           <DialogHeader>
             <div className="flex justify-between items-center">
