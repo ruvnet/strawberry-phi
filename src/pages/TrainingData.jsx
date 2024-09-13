@@ -10,6 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/components/ui/use-toast";
 import { useApiKey } from '../contexts/ApiKeyContext';
 
+// Import the data-creator.js functionality
+import { generateTrainingData } from '../../finetune/data-creator';
+
 const TrainingData = () => {
   const { toast } = useToast();
   const { apiKey } = useApiKey();
@@ -42,7 +45,7 @@ or creative solutions.`,
     setConfig(prevConfig => ({ ...prevConfig, [name]: value }));
   };
 
-  const generateTrainingData = async () => {
+  const handleGenerateTrainingData = async () => {
     if (!apiKey) {
       toast({
         title: "API Key Missing",
@@ -58,19 +61,11 @@ or creative solutions.`,
     });
 
     try {
-      const response = await fetch('/api/generate-training-data', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ...config, apiKey }),
+      // Use the imported generateTrainingData function
+      const result = await generateTrainingData({
+        ...config,
+        API_KEY: apiKey,
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate training data');
-      }
-
-      const result = await response.json();
 
       toast({
         title: "Generation Complete",
@@ -176,7 +171,7 @@ or creative solutions.`,
               </div>
             </TabsContent>
           </Tabs>
-          <Button onClick={generateTrainingData} className="mt-4 bg-strawberry-500 hover:bg-strawberry-600 text-white">
+          <Button onClick={handleGenerateTrainingData} className="mt-4 bg-strawberry-500 hover:bg-strawberry-600 text-white">
             Generate Training Data
           </Button>
         </CardContent>
