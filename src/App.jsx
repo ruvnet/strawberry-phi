@@ -11,6 +11,7 @@ import JobStatus from './pages/JobStatus';
 import ModelTesting from './pages/ModelTesting';
 import Settings from './pages/Settings';
 import Help from './pages/Help';
+import TrainingData from './pages/TrainingData';
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
               <Route path="/test" element={<ModelTesting />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/help" element={<Help />} />
+              <Route path="/training-data" element={<TrainingData />} />
             </Routes>
           </Layout>
         </Router>

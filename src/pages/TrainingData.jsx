@@ -8,11 +8,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
+import { useApiKey } from '../contexts/ApiKeyContext';
 
 const TrainingData = () => {
   const { toast } = useToast();
+  const { apiKey } = useApiKey();
   const [config, setConfig] = useState({
-    apiKey: '',
     modelName: 'gpt-o1-mini',
     outputFile: 'training_data.jsonl',
     numExamples: 150,
@@ -42,20 +43,46 @@ or creative solutions.`,
   };
 
   const generateTrainingData = async () => {
-    // This function would typically call the backend to run the data creation script
-    // For now, we'll just simulate the process
+    if (!apiKey) {
+      toast({
+        title: "API Key Missing",
+        description: "Please set your OpenAI API key in the Settings page.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     toast({
       title: "Generation Started",
       description: "Training data generation has begun. This may take a while.",
     });
 
-    // Simulating a delay
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    try {
+      const response = await fetch('/api/generate-training-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...config, apiKey }),
+      });
 
-    toast({
-      title: "Generation Complete",
-      description: `${config.numExamples} examples have been generated and saved to ${config.outputFile}`,
-    });
+      if (!response.ok) {
+        throw new Error('Failed to generate training data');
+      }
+
+      const result = await response.json();
+
+      toast({
+        title: "Generation Complete",
+        description: `${result.numExamples} examples have been generated and saved to ${result.outputFile}`,
+      });
+    } catch (error) {
+      toast({
+        title: "Generation Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -75,10 +102,6 @@ or creative solutions.`,
             <TabsContent value="basic">
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="apiKey">API Key</Label>
-                  <Input id="apiKey" name="apiKey" value={config.apiKey} onChange={handleInputChange} type="password" />
-                </div>
-                <div>
                   <Label htmlFor="modelName">Model Name</Label>
                   <Select value={config.modelName} onValueChange={(value) => handleSelectChange('modelName', value)}>
                     <SelectTrigger>
@@ -93,6 +116,10 @@ or creative solutions.`,
                 <div>
                   <Label htmlFor="numExamples">Number of Examples</Label>
                   <Input id="numExamples" name="numExamples" value={config.numExamples} onChange={handleInputChange} type="number" />
+                </div>
+                <div>
+                  <Label htmlFor="outputFile">Output File Name</Label>
+                  <Input id="outputFile" name="outputFile" value={config.outputFile} onChange={handleInputChange} />
                 </div>
               </div>
             </TabsContent>
