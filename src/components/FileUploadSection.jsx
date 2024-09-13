@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import JsonDisplay from './JsonDisplay';
-import ValidationAlert from './ValidationAlert';
 import FileSourceSelector from './FileSourceSelector';
 
 const CHUNK_SIZE = 1024 * 1024; // 1MB chunks
 
 const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonContent, setJsonContent }) => {
   const [validationError, setValidationError] = useState(null);
-  const [correctedContent, setCorrectedContent] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (usePreExistingFile) {
@@ -19,54 +19,35 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonCont
   }, [usePreExistingFile]);
 
   const loadPreExistingFile = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch('/finetune/strawberry-phi.jsonl');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const content = await response.text();
-      validateAndCorrectJsonContent(content);
+      validateAndSetContent(content);
     } catch (error) {
-      setValidationError("Error loading pre-existing file: " + error.message);
+      setValidationError(`Error loading pre-existing file: ${error.message}`);
+      setUsePreExistingFile(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const validateAndCorrectJsonContent = (content) => {
+  const validateAndSetContent = (content) => {
     try {
       const lines = content.trim().split('\n');
-      const correctedLines = lines.map(line => {
-        try {
-          const parsed = JSON.parse(line);
-          if (typeof parsed === 'object' && parsed !== null && 'messages' in parsed) {
-            return JSON.stringify(parsed);
-          } else {
-            throw new Error("Invalid structure");
-          }
-        } catch (error) {
-          const corrected = {
-            messages: [
-              { role: "system", content: "You are a helpful assistant." },
-              { role: "user", content: line },
-              { role: "assistant", content: "I'm sorry, but I don't have enough context to provide a specific response to that input." }
-            ]
-          };
-          return JSON.stringify(corrected);
-        }
-      });
-
-      if (correctedLines.length < 10) {
+      if (lines.length < 10) {
         throw new Error("The training file must have at least 10 examples.");
       }
-
-      const correctedContent = correctedLines.join('\n');
-      setCorrectedContent(correctedContent);
-      setJsonContent(correctedContent);
-      storeContentInChunks(correctedContent);
+      lines.forEach(JSON.parse);
+      setJsonContent(content);
       setValidationError(null);
+      storeContentInChunks(content);
     } catch (error) {
-      setValidationError(error.message);
+      setValidationError(`Invalid JSONL format: ${error.message}`);
       setJsonContent('');
-      setCorrectedContent(null);
     }
   };
 
@@ -82,20 +63,12 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonCont
       localStorage.setItem('uploadedJsonFile_chunks', chunks.length.toString());
     } catch (error) {
       console.error('Error storing content in chunks:', error);
-      setValidationError("Failed to store the file due to storage limitations. Try using a smaller file or clearing some browser storage.");
+      setValidationError("Failed to store the file due to storage limitations.");
     }
   };
 
   const handleJsonContentChange = (e) => {
-    const content = e.target.value;
-    validateAndCorrectJsonContent(content);
-  };
-
-  const applyCorrections = () => {
-    if (correctedContent) {
-      setJsonContent(correctedContent);
-      setCorrectedContent(null);
-    }
+    validateAndSetContent(e.target.value);
   };
 
   return (
@@ -104,6 +77,13 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonCont
         usePreExistingFile={usePreExistingFile}
         setUsePreExistingFile={setUsePreExistingFile}
       />
+      {isLoading && <p>Loading pre-existing file...</p>}
+      {validationError && (
+        <Alert variant="destructive">
+          <AlertTitle>Validation Error</AlertTitle>
+          <AlertDescription>{validationError}</AlertDescription>
+        </Alert>
+      )}
       {!usePreExistingFile && (
         <div>
           <Label htmlFor="jsonContent" className="text-strawberry-600">JSONL Content</Label>
@@ -119,11 +99,6 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonCont
           </p>
         </div>
       )}
-      <ValidationAlert
-        validationError={validationError}
-        correctedContent={correctedContent}
-        applyCorrections={applyCorrections}
-      />
       <JsonDisplay jsonContent={jsonContent} />
     </div>
   );
