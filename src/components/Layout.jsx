@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { LayoutDashboard, Plus, ListOrdered, TestTube, Settings, HelpCircle, Menu, Lock, X } from "lucide-react";
+import { LayoutDashboard, Plus, ListOrdered, TestTube, Settings, HelpCircle, Menu, Lock, X, Database } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,7 @@ const navItems = [
   { title: 'New Job', icon: <Plus className="h-4 w-4" />, path: '/new-job' },
   { title: 'Job Status', icon: <ListOrdered className="h-4 w-4" />, path: '/jobs' },
   { title: 'Model Testing', icon: <TestTube className="h-4 w-4" />, path: '/test' },
+  { title: 'Training Data', icon: <Database className="h-4 w-4" />, path: '/training-data' },
   { title: 'Settings', icon: <Settings className="h-4 w-4" />, path: '/settings' },
   { title: 'Help', icon: <HelpCircle className="h-4 w-4" />, path: '/help' },
 ];
