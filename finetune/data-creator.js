@@ -10,7 +10,7 @@ async function generateTrainingData(config) {
     BACKOFF_FACTOR,
     GUIDANCE_PROMPT,
     temperature,
-    maxTokens
+    maxCompletionTokens
   } = config;
 
   function sleep(ms) {
@@ -27,7 +27,7 @@ async function generateTrainingData(config) {
     const params = {
       model: MODEL_NAME,
       messages: messages,
-      max_tokens: parseInt(maxTokens, 10),
+      max_completion_tokens: parseInt(maxCompletionTokens, 10),
       temperature: parseFloat(temperature),
       n: parseInt(numRequests, 10),
     };
@@ -66,7 +66,7 @@ async function generateTrainingData(config) {
     const params = {
       model: MODEL_NAME,
       messages: messages,
-      max_tokens: parseInt(maxTokens, 10),
+      max_completion_tokens: parseInt(maxCompletionTokens, 10),
       temperature: parseFloat(temperature),
     };
 
