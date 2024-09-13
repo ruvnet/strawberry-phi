@@ -8,7 +8,8 @@ import { createFineTuningJob } from '../utils/openaiApi';
 import FileUploadSection from '../components/FileUploadSection';
 import ParameterSection from '../components/ParameterSection';
 import ModelSelector from '../components/ModelSelector';
-import { ScrollArea } from "@/components/ui/scroll-area";
+import JobSubmissionSection from '../components/JobSubmissionSection';
+import ApiResponseDisplay from '../components/ApiResponseDisplay';
 
 const NewJob = () => {
   const [activeTab, setActiveTab] = useState("upload");
@@ -31,31 +32,7 @@ const NewJob = () => {
     }
   }, []);
 
-  const validateJsonContent = (content) => {
-    try {
-      const lines = content.trim().split('\n');
-      lines.forEach(line => {
-        const parsed = JSON.parse(line);
-        if (!parsed.messages || !Array.isArray(parsed.messages)) {
-          throw new Error("Each line must be a JSON object with a 'messages' array");
-        }
-      });
-      return true;
-    } catch (error) {
-      toast({
-        title: "Validation Error",
-        description: `Invalid JSONL format: ${error.message}`,
-        variant: "destructive",
-      });
-      return false;
-    }
-  };
-
   const handleSubmit = async () => {
-    if (!validateJsonContent(jsonContent)) {
-      return;
-    }
-
     setIsLoading(true);
     setApiResponse(null);
     try {
@@ -63,7 +40,6 @@ const NewJob = () => {
       if (usePreExistingFile) {
         fileId = 'file-abc123'; // Replace with actual file ID for pre-existing file
       } else if (jsonContent) {
-        // Convert jsonContent to a File object
         const blob = new Blob([jsonContent], { type: 'application/json' });
         const file = new File([blob], 'training_data.jsonl', { type: 'application/json' });
         fileId = await uploadFile(file);
@@ -90,13 +66,9 @@ const NewJob = () => {
       });
     } catch (error) {
       setApiResponse({ error: error.message });
-      let errorMessage = error.message;
-      if (error.response && error.response.status === 429) {
-        errorMessage = "You've hit the API rate limit. Please wait a few minutes and try again.";
-      }
       toast({
         title: "Error Creating Job",
-        description: errorMessage,
+        description: error.message,
         variant: "destructive",
       });
     } finally {
@@ -119,17 +91,12 @@ const NewJob = () => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      if (response.status === 429) {
-        throw new Error("Rate limit exceeded. Please wait a few minutes and try again.");
-      }
       throw new Error(errorData.error?.message || 'Failed to upload file');
     }
 
     const data = await response.json();
     return data.id;
   };
-
-  const isUploadValid = usePreExistingFile || jsonContent;
 
   return (
     <div className="space-y-4">
@@ -156,7 +123,7 @@ const NewJob = () => {
               />
               <Button 
                 onClick={() => setActiveTab("model")} 
-                disabled={!isUploadValid} 
+                disabled={!jsonContent} 
                 className="bg-strawberry-500 hover:bg-strawberry-600 text-white mt-4"
               >
                 Continue
@@ -180,26 +147,16 @@ const NewJob = () => {
                 jobSuffix={jobSuffix}
                 setJobSuffix={setJobSuffix}
               />
-              <div className="space-x-2 mt-4">
-                <Button onClick={() => setActiveTab("model")} variant="outline" className="border-strawberry-300 text-strawberry-600">Back</Button>
-                <Button onClick={handleSubmit} disabled={isLoading} className="bg-strawberry-500 hover:bg-strawberry-600 text-white">
-                  {isLoading ? 'Creating Job...' : 'Start Job'}
-                </Button>
-              </div>
+              <JobSubmissionSection
+                onBack={() => setActiveTab("model")}
+                onSubmit={handleSubmit}
+                isLoading={isLoading}
+              />
             </TabsContent>
           </CardContent>
         </Card>
       </Tabs>
-      {apiResponse && (
-        <Card className="mt-4 bg-white/50 backdrop-blur-sm border-strawberry-200">
-          <CardContent>
-            <h2 className="text-xl font-semibold text-strawberry-700 mb-2">API Response</h2>
-            <ScrollArea className="h-[200px] w-full rounded-md border p-4">
-              <pre className="text-sm whitespace-pre-wrap">{JSON.stringify(apiResponse, null, 2)}</pre>
-            </ScrollArea>
-          </CardContent>
-        </Card>
-      )}
+      <ApiResponseDisplay apiResponse={apiResponse} />
     </div>
   );
 };

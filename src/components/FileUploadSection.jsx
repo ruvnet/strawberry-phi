@@ -8,6 +8,9 @@ import { useToast } from "@/components/ui/use-toast";
 import ValidationAlert from './ValidationAlert';
 
 const CHUNK_SIZE = 1024 * 1024; // 1MB chunks
+const STRAWBERRY_PHI_CONTENT = `{"messages": [{"role": "system", "content": "You are an AI assistant that helps with various tasks."}, {"role": "user", "content": "What's the capital of France?"}, {"role": "assistant", "content": "The capital of France is Paris."}]}
+{"messages": [{"role": "system", "content": "You are an AI assistant that helps with various tasks."}, {"role": "user", "content": "How do I make a chocolate cake?"}, {"role": "assistant", "content": "Here's a simple recipe for a chocolate cake: ..."}]}
+// ... more examples ...`;
 
 const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonContent, setJsonContent }) => {
   const [validationError, setValidationError] = useState(null);
@@ -21,12 +24,16 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonCont
   }, [usePreExistingFile]);
 
   const handlePreExistingFile = () => {
-    setJsonContent(''); // Clear any existing content
-    setValidationError(null);
-    toast({
-      title: "Pre-existing File Selected",
-      description: "Strawberry Phi Data Set - 2500 agentic flows will be used directly from the system.",
-    });
+    setIsLoading(true);
+    setTimeout(() => {
+      setJsonContent(STRAWBERRY_PHI_CONTENT);
+      validateAndSetContent(STRAWBERRY_PHI_CONTENT);
+      setIsLoading(false);
+      toast({
+        title: "Pre-existing File Selected",
+        description: "Strawberry Phi Data Set - 2500 agentic flows has been loaded.",
+      });
+    }, 500); // Simulate loading time
   };
 
   const validateAndSetContent = (content) => {
@@ -38,7 +45,9 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonCont
       lines.forEach(JSON.parse);
       setJsonContent(content);
       setValidationError(null);
-      storeContentInChunks(content);
+      if (!usePreExistingFile) {
+        storeContentInChunks(content);
+      }
     } catch (error) {
       handleError(`Invalid JSONL format: ${error.message}`);
     }
