@@ -17,7 +17,7 @@ const ModelSelector = ({ onModelSelect, defaultModel }) => {
         });
         const allModels = response.data.data;
         const relevantModels = allModels.filter(model => 
-          model.id.startsWith('gpt-') || model.id.includes('ft-')
+          model.id.startsWith('gpt-') || model.id.includes('ft-') || model.id.startsWith('ft:')
         );
         setModels(relevantModels);
       } catch (error) {
@@ -30,6 +30,14 @@ const ModelSelector = ({ onModelSelect, defaultModel }) => {
     }
   }, [apiKey]);
 
+  const formatModelName = (modelId) => {
+    if (modelId.startsWith('ft:')) {
+      const parts = modelId.split(':');
+      return `${parts[1]} (Custom: ${parts[3] || 'Latest'})`;
+    }
+    return modelId;
+  };
+
   return (
     <div className="space-y-4">
       <Select onValueChange={onModelSelect} defaultValue={defaultModel}>
@@ -39,7 +47,7 @@ const ModelSelector = ({ onModelSelect, defaultModel }) => {
         <SelectContent>
           {models.map((model) => (
             <SelectItem key={model.id} value={model.id}>
-              {model.id}
+              {formatModelName(model.id)}
             </SelectItem>
           ))}
         </SelectContent>
