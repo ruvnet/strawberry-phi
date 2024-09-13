@@ -121,6 +121,8 @@ const JobStatus = () => {
     return new Date(dateString).toLocaleString();
   };
 
+  const totalPages = Math.ceil(totalJobs / jobsPerPage);
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -171,7 +173,7 @@ const JobStatus = () => {
       </div>
       <Pagination
         currentPage={currentPage}
-        totalPages={Math.ceil(totalJobs / jobsPerPage)}
+        totalPages={totalPages}
         onPageChange={setCurrentPage}
       />
       <JobDetailsDialog
