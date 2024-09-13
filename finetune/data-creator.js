@@ -1,125 +1,101 @@
 import axios from 'axios';
 
-async function generateTrainingData(config) {
-  const {
-    API_KEY,
-    MODEL_NAME,
-    NUM_EXAMPLES,
-    CONCURRENT_REQUESTS,
-    RETRY_LIMIT,
-    BACKOFF_FACTOR,
-    GUIDANCE_PROMPT,
-    temperature,
-    maxCompletionTokens
-  } = config;
+const config = {
+  API_KEY: 'your_openai_api_key_here',
+  MODEL_NAME: 'gpt-4o-2024-08-06',
+  NUM_EXAMPLES: 150,
+  CONCURRENT_REQUESTS: 10,
+  RETRY_LIMIT: 3,
+  BACKOFF_FACTOR: 2,
+  GUIDANCE_PROMPT: `Generate a diverse set of user requests for an advanced AI assistant. 
+Each request should be a complex task that an executive or professional might ask, 
+requiring detailed analysis, planning, or creative solutions. 
+Format each request as a JSON object with a 'messages' array containing 'role' and 'content' keys. 
+Example format:
+{
+  "messages": [
+    {"role": "system", "content": "You are an advanced, multi-modal autonomous AI agent with exceptional capabilities."},
+    {"role": "user", "content": "User's complex request goes here"},
+    {"role": "assistant", "content": "AI's detailed response goes here"}
+  ]
+}`,
+  temperature: 0.8,
+  maxCompletionTokens: 500
+};
 
-  function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+async function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-  async function generateUserRequests(numRequests) {
-    const userRequests = [];
-    const messages = [
-      { role: 'system', content: 'You are an assistant that generates user prompts.' },
-      { role: 'user', content: GUIDANCE_PROMPT }
-    ];
-    
-    const params = {
-      model: MODEL_NAME,
-      messages: messages,
-      max_completion_tokens: parseInt(maxCompletionTokens, 10),
-      temperature: parseFloat(temperature),
-      n: parseInt(numRequests, 10),
-    };
-
-    for (let attempt = 1; attempt <= RETRY_LIMIT; attempt++) {
-      try {
-        const response = await axios.post('https://api.openai.com/v1/chat/completions', params, {
-          headers: {
-            'Authorization': `Bearer ${API_KEY}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        const choices = response.data.choices;
-        for (const choice of choices) {
-          const prompt = choice.message.content.trim();
-          userRequests.push(prompt);
-        }
-        return userRequests;
-      } catch (error) {
-        console.error(`Error generating user requests (Attempt ${attempt}):`, error);
-        if (attempt === RETRY_LIMIT) {
-          throw error;
-        }
-        await sleep(BACKOFF_FACTOR * attempt);
+async function makeApiRequest(endpoint, data, retryCount = 0) {
+  try {
+    const response = await axios.post(`https://api.openai.com/v1/${endpoint}`, data, {
+      headers: {
+        'Authorization': `Bearer ${config.API_KEY}`,
+        'Content-Type': 'application/json'
       }
+    });
+    return response.data;
+  } catch (error) {
+    if (retryCount < config.RETRY_LIMIT) {
+      await sleep(config.BACKOFF_FACTOR * (retryCount + 1) * 1000);
+      return makeApiRequest(endpoint, data, retryCount + 1);
     }
-    return userRequests;
+    throw error;
   }
+}
 
-  async function fetchResponse(prompt) {
-    const messages = [
+async function generateUserRequests(numRequests) {
+  const data = {
+    model: config.MODEL_NAME,
+    messages: [
+      { role: 'system', content: 'You are an assistant that generates user prompts.' },
+      { role: 'user', content: config.GUIDANCE_PROMPT }
+    ],
+    max_tokens: config.maxCompletionTokens,
+    temperature: config.temperature,
+    n: numRequests,
+  };
+
+  const response = await makeApiRequest('chat/completions', data);
+  return response.choices.map(choice => {
+    try {
+      return JSON.parse(choice.message.content.trim());
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+      return null;
+    }
+  }).filter(Boolean);
+}
+
+async function fetchResponse(prompt) {
+  const data = {
+    model: config.MODEL_NAME,
+    messages: [
       { role: 'system', content: 'You are an advanced, multi-modal autonomous AI agent with exceptional capabilities.' },
       { role: 'user', content: prompt }
-    ];
+    ],
+    max_tokens: config.maxCompletionTokens,
+    temperature: config.temperature,
+  };
 
-    const params = {
-      model: MODEL_NAME,
-      messages: messages,
-      max_completion_tokens: parseInt(maxCompletionTokens, 10),
-      temperature: parseFloat(temperature),
-    };
+  const response = await makeApiRequest('chat/completions', data);
+  return response.choices[0].message.content.trim();
+}
 
-    for (let attempt = 1; attempt <= RETRY_LIMIT; attempt++) {
-      try {
-        const response = await axios.post('https://api.openai.com/v1/chat/completions', params, {
-          headers: {
-            'Authorization': `Bearer ${API_KEY}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        const assistantContent = response.data.choices[0].message.content.trim();
-        return assistantContent;
-      } catch (error) {
-        console.error(`Error fetching response for prompt '${prompt}' (Attempt ${attempt}):`, error);
-        if (attempt === RETRY_LIMIT) {
-          throw error;
-        }
-        await sleep(BACKOFF_FACTOR * attempt);
-      }
-    }
-  }
-
+async function generateTrainingData() {
   console.log('Generating dynamic user requests...');
-  let userRequests = await generateUserRequests(NUM_EXAMPLES);
-
-  if (userRequests.length < NUM_EXAMPLES) {
-    console.log(`Only generated ${userRequests.length} user requests. Adjusting the number of examples.`);
-    userRequests = userRequests.slice(0, userRequests.length);
-  } else {
-    userRequests = userRequests.slice(0, NUM_EXAMPLES);
-  }
+  let userRequests = await generateUserRequests(config.NUM_EXAMPLES);
 
   const trainingData = [];
-  const tasks = [];
+  const tasks = userRequests.map(async (request, index) => {
+    const assistantResponse = await fetchResponse(request.messages[1].content);
+    request.messages.push({ role: 'assistant', content: assistantResponse });
+    trainingData.push(request);
+    console.log(`Generated example ${index + 1}/${config.NUM_EXAMPLES}`);
+  });
 
-  for (let i = 0; i < userRequests.length; i += CONCURRENT_REQUESTS) {
-    const batch = userRequests.slice(i, i + CONCURRENT_REQUESTS);
-    const batchPromises = batch.map(async (prompt, index) => {
-      const assistantResponse = await fetchResponse(prompt);
-      const trainingExample = {
-        messages: [
-          { role: 'system', content: 'You are an advanced, multi-modal autonomous AI agent with exceptional capabilities.' },
-          { role: 'user', content: prompt },
-          { role: 'assistant', content: assistantResponse }
-        ]
-      };
-      trainingData.push(trainingExample);
-      console.log(`Generated example ${i + index + 1}/${NUM_EXAMPLES}`);
-    });
-    await Promise.all(batchPromises);
-  }
-
+  await Promise.all(tasks);
   return { numExamples: trainingData.length, trainingData };
 }
 
