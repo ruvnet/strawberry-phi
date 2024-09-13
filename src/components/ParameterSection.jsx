@@ -3,9 +3,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const ParameterSection = ({ learningRate, setLearningRate, epochs, setEpochs, batchSize, setBatchSize }) => {
+const ParameterSection = ({ learningRate, setLearningRate, epochs, setEpochs, batchSize, setBatchSize, jobSuffix, setJobSuffix }) => {
   return (
     <div className="space-y-4">
+      <div>
+        <Label htmlFor="jobSuffix" className="text-strawberry-600">Job Name Suffix</Label>
+        <p className="text-sm text-strawberry-600 mb-2">
+          Provide a custom suffix for your fine-tuned model name. This will help you identify your model easily.
+        </p>
+        <Input
+          id="jobSuffix"
+          type="text"
+          value={jobSuffix}
+          onChange={(e) => setJobSuffix(e.target.value)}
+          placeholder="e.g., my-custom-model"
+          className="border-strawberry-300 focus:border-strawberry-500"
+        />
+      </div>
       <div>
         <Label htmlFor="learningRate" className="text-strawberry-600">Learning Rate</Label>
         <p className="text-sm text-strawberry-600 mb-2">

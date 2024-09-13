@@ -17,6 +17,7 @@ const NewJob = () => {
   const [learningRate, setLearningRate] = useState('0.001');
   const [epochs, setEpochs] = useState('3');
   const [batchSize, setBatchSize] = useState('8');
+  const [jobSuffix, setJobSuffix] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [usePreExistingFile, setUsePreExistingFile] = useState(false);
   const [apiResponse, setApiResponse] = useState(null);
@@ -49,6 +50,7 @@ const NewJob = () => {
       const jobData = {
         training_file: fileId,
         model: model,
+        suffix: jobSuffix,
         hyperparameters: {
           learning_rate_multiplier: parseFloat(learningRate),
           n_epochs: parseInt(epochs, 10),
@@ -144,6 +146,8 @@ const NewJob = () => {
                 setEpochs={setEpochs}
                 batchSize={batchSize}
                 setBatchSize={setBatchSize}
+                jobSuffix={jobSuffix}
+                setJobSuffix={setJobSuffix}
               />
               <div className="space-x-2 mt-4">
                 <Button onClick={() => setActiveTab("model")} variant="outline" className="border-strawberry-300 text-strawberry-600">Back</Button>
