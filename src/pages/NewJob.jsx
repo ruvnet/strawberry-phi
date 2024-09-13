@@ -1,29 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/components/ui/use-toast";
 import { useApiKey } from '../contexts/ApiKeyContext';
 import { createFineTuningJob } from '../utils/openaiApi';
 import FileUploadSection from '../components/FileUploadSection';
 import ParameterSection from '../components/ParameterSection';
-import JsonDisplay from '../components/JsonDisplay';
 import ModelSelector from '../components/ModelSelector';
 
 const NewJob = () => {
   const [activeTab, setActiveTab] = useState("upload");
   const [file, setFile] = useState(null);
+  const [jsonContent, setJsonContent] = useState('');
   const [model, setModel] = useState('gpt-4o');
   const [learningRate, setLearningRate] = useState('0.001');
   const [epochs, setEpochs] = useState('3');
   const [batchSize, setBatchSize] = useState('8');
   const [isLoading, setIsLoading] = useState(false);
-  const [jsonContent, setJsonContent] = useState('');
   const [usePreExistingFile, setUsePreExistingFile] = useState(false);
   const { apiKey } = useApiKey();
   const { toast } = useToast();
@@ -32,22 +26,18 @@ const NewJob = () => {
     const storedData = localStorage.getItem('trainingData');
     if (storedData) {
       setJsonContent(storedData);
-    } else if (usePreExistingFile) {
-      fetch('/finetune/strawberry-phi.jsonl')
-        .then(response => response.text())
-        .then(data => setJsonContent(data))
-        .catch(error => console.error('Error loading pre-existing file:', error));
     }
-  }, [usePreExistingFile]);
+  }, []);
 
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
       const formData = new FormData();
-      if (usePreExistingFile) {
-        const preExistingFileBlob = new Blob([jsonContent], { type: 'application/json' });
-        formData.append('file', preExistingFileBlob, 'strawberry-phi.jsonl');
-      } else {
+      if (usePreExistingFile || jsonContent) {
+        const contentToUse = usePreExistingFile ? await fetch('/finetune/strawberry-phi.jsonl').then(res => res.text()) : jsonContent;
+        const jsonBlob = new Blob([contentToUse], { type: 'application/json' });
+        formData.append('file', jsonBlob, 'training_data.jsonl');
+      } else if (file) {
         formData.append('file', file);
       }
       formData.append('model', model);
@@ -96,7 +86,13 @@ const NewJob = () => {
                 jsonContent={jsonContent}
                 setJsonContent={setJsonContent}
               />
-              <Button onClick={() => setActiveTab("model")} disabled={!file && !usePreExistingFile} className="bg-strawberry-500 hover:bg-strawberry-600 text-white mt-4">Continue</Button>
+              <Button 
+                onClick={() => setActiveTab("model")} 
+                disabled={!file && !usePreExistingFile && !jsonContent} 
+                className="bg-strawberry-500 hover:bg-strawberry-600 text-white mt-4"
+              >
+                Continue
+              </Button>
             </TabsContent>
             <TabsContent value="model">
               <ModelSelector model={model} setModel={setModel} />
