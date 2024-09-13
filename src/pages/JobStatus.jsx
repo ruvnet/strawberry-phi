@@ -5,11 +5,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { useApiKey } from '../contexts/ApiKeyContext';
-import { fetchJobs, fetchJobStatus } from '../utils/openaiApi';
+import { fetchJobs, fetchJobStatus, fetchJobEvents } from '../utils/openaiApi';
 
 const JobStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedJob, setSelectedJob] = useState(null);
+  const [jobEvents, setJobEvents] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [totalJobs, setTotalJobs] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -68,6 +69,17 @@ const JobStatus = () => {
     }
   };
 
+  const loadJobEvents = async (jobId) => {
+    if (apiKey) {
+      try {
+        const events = await fetchJobEvents(apiKey, jobId);
+        setJobEvents(events);
+      } catch (error) {
+        console.error('Error fetching job events:', error);
+      }
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'succeeded':
@@ -97,7 +109,7 @@ const JobStatus = () => {
       </div>
       <p className="text-strawberry-600 mb-6">
         Monitor and manage your fine-tuning jobs here. This page displays all your current and past fine-tuning tasks,
-        allowing you to track progress, view details, and manage your custom models efficiently. You can refresh the status of individual jobs or all jobs at once to get real-time updates.
+        allowing you to track progress, view details, and manage your custom models efficiently.
       </p>
       <div className="bg-white/50 backdrop-blur-sm rounded-lg border border-strawberry-200 overflow-hidden">
         <Table>
@@ -124,7 +136,10 @@ const JobStatus = () => {
                     </Button>
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" onClick={() => setSelectedJob(job)}>
+                        <Button variant="outline" size="sm" onClick={() => {
+                          setSelectedJob(job);
+                          loadJobEvents(job.id);
+                        }}>
                           View Details
                         </Button>
                       </DialogTrigger>
@@ -152,6 +167,14 @@ const JobStatus = () => {
                               {selectedJob.error && (
                                 <p><strong>Error:</strong> {selectedJob.error.message}</p>
                               )}
+                              <h3 className="font-semibold mt-4">Job Events:</h3>
+                              <ul className="list-disc pl-5">
+                                {jobEvents.map((event, index) => (
+                                  <li key={index} className="text-sm">
+                                    {formatDate(event.created_at)}: {event.message}
+                                  </li>
+                                ))}
+                              </ul>
                             </div>
                           )}
                         </ScrollArea>

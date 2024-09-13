@@ -8,6 +8,7 @@ import { createFineTuningJob } from '../utils/openaiApi';
 import FileUploadSection from '../components/FileUploadSection';
 import ParameterSection from '../components/ParameterSection';
 import ModelSelector from '../components/ModelSelector';
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const NewJob = () => {
   const [activeTab, setActiveTab] = useState("upload");
@@ -19,6 +20,7 @@ const NewJob = () => {
   const [batchSize, setBatchSize] = useState('8');
   const [isLoading, setIsLoading] = useState(false);
   const [usePreExistingFile, setUsePreExistingFile] = useState(false);
+  const [apiResponse, setApiResponse] = useState(null);
   const { apiKey } = useApiKey();
   const { toast } = useToast();
 
@@ -31,6 +33,7 @@ const NewJob = () => {
 
   const handleSubmit = async () => {
     setIsLoading(true);
+    setApiResponse(null);
     try {
       const formData = new FormData();
       if (usePreExistingFile || jsonContent) {
@@ -46,11 +49,13 @@ const NewJob = () => {
       formData.append('batch_size', batchSize);
 
       const response = await createFineTuningJob(apiKey, formData);
+      setApiResponse(response);
       toast({
         title: "Job Created Successfully",
         description: `Job ID: ${response.id}`,
       });
     } catch (error) {
+      setApiResponse({ error: error.message });
       toast({
         title: "Error Creating Job",
         description: error.message,
@@ -60,6 +65,8 @@ const NewJob = () => {
       setIsLoading(false);
     }
   };
+
+  const isUploadValid = file || usePreExistingFile || jsonContent;
 
   return (
     <div className="space-y-4">
@@ -88,7 +95,7 @@ const NewJob = () => {
               />
               <Button 
                 onClick={() => setActiveTab("model")} 
-                disabled={!file && !usePreExistingFile && !jsonContent} 
+                disabled={!isUploadValid} 
                 className="bg-strawberry-500 hover:bg-strawberry-600 text-white mt-4"
               >
                 Continue
@@ -120,6 +127,16 @@ const NewJob = () => {
           </CardContent>
         </Card>
       </Tabs>
+      {apiResponse && (
+        <Card className="mt-4 bg-white/50 backdrop-blur-sm border-strawberry-200">
+          <CardContent>
+            <h2 className="text-xl font-semibold text-strawberry-700 mb-2">API Response</h2>
+            <ScrollArea className="h-[200px] w-full rounded-md border p-4">
+              <pre className="text-sm whitespace-pre-wrap">{JSON.stringify(apiResponse, null, 2)}</pre>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
