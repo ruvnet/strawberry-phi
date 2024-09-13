@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/components/ui/use-toast";
 import { useApiKey } from '../contexts/ApiKeyContext';
 
-// Import the data-creator.js functionality
+// Import the generateTrainingData function
 import { generateTrainingData } from '../../finetune/data-creator';
 
 const TrainingData = () => {
@@ -31,6 +31,8 @@ or creative solutions.`,
     temperature: 0.8,
     maxTokens: 200,
   });
+
+  const [generatedData, setGeneratedData] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -61,15 +63,23 @@ or creative solutions.`,
     });
 
     try {
-      // Use the imported generateTrainingData function
       const result = await generateTrainingData({
         ...config,
         API_KEY: apiKey,
+        MODEL_NAME: config.modelName,
+        OUTPUT_FILE: config.outputFile,
+        NUM_EXAMPLES: config.numExamples,
+        CONCURRENT_REQUESTS: config.concurrentRequests,
+        RETRY_LIMIT: config.retryLimit,
+        BACKOFF_FACTOR: config.backoffFactor,
+        GUIDANCE_PROMPT: config.guidancePrompt,
       });
+
+      setGeneratedData(result.trainingData);
 
       toast({
         title: "Generation Complete",
-        description: `${result.numExamples} examples have been generated and saved to ${result.outputFile}`,
+        description: `${result.numExamples} examples have been generated.`,
       });
     } catch (error) {
       toast({
@@ -176,6 +186,18 @@ or creative solutions.`,
           </Button>
         </CardContent>
       </Card>
+      {generatedData && (
+        <Card className="bg-white/50 backdrop-blur-sm border-strawberry-200 mt-4">
+          <CardHeader>
+            <CardTitle className="text-strawberry-700">Generated Training Data</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <pre className="whitespace-pre-wrap overflow-auto max-h-96">
+              {JSON.stringify(generatedData, null, 2)}
+            </pre>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

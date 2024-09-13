@@ -117,15 +117,9 @@ async function generateTrainingData(config) {
     await Promise.all(batchPromises);
   }
 
-  const writeStream = fs.createWriteStream(OUTPUT_FILE, { flags: 'w', encoding: 'utf-8' });
-  for (const example of trainingData) {
-    const jsonLine = JSON.stringify(example);
-    writeStream.write(jsonLine + '\n');
-  }
-  writeStream.end();
-  console.log(`Training data generation complete. Saved to ${OUTPUT_FILE}`);
-
-  return { numExamples: trainingData.length, outputFile: OUTPUT_FILE };
+  // Instead of writing to a file, return the training data
+  return { numExamples: trainingData.length, trainingData };
 }
 
-module.exports = { generateTrainingData };
+// Export the generateTrainingData function
+export { generateTrainingData };
