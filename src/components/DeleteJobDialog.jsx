@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/button";
 const DeleteJobDialog = ({ job, onClose, onDelete }) => {
   if (!job) return null;
 
+  const handleDelete = () => {
+    onDelete(job.id);
+    onClose();
+  };
+
   return (
     <Dialog open={!!job} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
@@ -16,7 +21,7 @@ const DeleteJobDialog = ({ job, onClose, onDelete }) => {
         </DialogHeader>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button variant="destructive" onClick={() => onDelete(job.id)}>Delete</Button>
+          <Button variant="destructive" onClick={handleDelete}>Delete</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

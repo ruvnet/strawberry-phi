@@ -8,6 +8,7 @@ import { fetchJobs, fetchJobStatus, fetchJobEvents, deleteJob } from '../utils/o
 import JobDetailsDialog from '../components/JobDetailsDialog';
 import DeleteJobDialog from '../components/DeleteJobDialog';
 import Pagination from '../components/Pagination';
+import { useToast } from "@/components/ui/use-toast";
 
 const JobStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,6 +18,7 @@ const JobStatus = () => {
   const [totalJobs, setTotalJobs] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const { apiKey } = useApiKey();
+  const { toast } = useToast();
   const jobsPerPage = 5;
 
   const loadJobs = async () => {
@@ -28,6 +30,11 @@ const JobStatus = () => {
         setTotalJobs(response.total);
       } catch (error) {
         console.error('Error fetching jobs:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch jobs. Please try again.",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
@@ -45,6 +52,11 @@ const JobStatus = () => {
         setJobs(jobs.map(job => job.id === jobId ? updatedJob : job));
       } catch (error) {
         console.error('Error refreshing job status:', error);
+        toast({
+          title: "Error",
+          description: "Failed to refresh job status. Please try again.",
+          variant: "destructive",
+        });
       }
     }
   };
@@ -56,6 +68,11 @@ const JobStatus = () => {
       setJobs(updatedJobs);
     } catch (error) {
       console.error('Error refreshing all job statuses:', error);
+      toast({
+        title: "Error",
+        description: "Failed to refresh all job statuses. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -65,9 +82,19 @@ const JobStatus = () => {
     try {
       await deleteJob(apiKey, jobId);
       setJobs(jobs.filter(job => job.id !== jobId));
-      setJobToDelete(null);
+      toast({
+        title: "Success",
+        description: "Job deleted successfully.",
+      });
     } catch (error) {
       console.error('Error deleting job:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete job. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setJobToDelete(null);
     }
   };
 
