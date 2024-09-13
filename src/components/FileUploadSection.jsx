@@ -9,28 +9,54 @@ import JsonDisplay from './JsonDisplay';
 
 const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonContent, setJsonContent }) => {
   const [validationError, setValidationError] = useState(null);
+  const [correctedContent, setCorrectedContent] = useState(null);
 
-  const validateAndSetJsonContent = (content) => {
+  const validateAndCorrectJsonContent = (content) => {
     try {
       const lines = content.trim().split('\n');
-      const parsedLines = lines.map(line => JSON.parse(line));
-      
-      if (parsedLines.every(line => typeof line === 'object' && line !== null && 'messages' in line)) {
-        setJsonContent(content);
-        localStorage.setItem('uploadedJsonFile', content);
-        setValidationError(null);
-      } else {
-        throw new Error("Each line must be a valid JSON object with a 'messages' key");
-      }
+      const correctedLines = lines.map(line => {
+        try {
+          const parsed = JSON.parse(line);
+          if (typeof parsed === 'object' && parsed !== null && 'messages' in parsed) {
+            return JSON.stringify(parsed);
+          } else {
+            throw new Error("Invalid structure");
+          }
+        } catch (error) {
+          // Attempt to correct the line
+          const corrected = {
+            messages: [
+              { role: "system", content: "You are a helpful assistant." },
+              { role: "user", content: line },
+              { role: "assistant", content: "I'm sorry, but I don't have enough context to provide a specific response to that input." }
+            ]
+          };
+          return JSON.stringify(corrected);
+        }
+      });
+
+      const correctedContent = correctedLines.join('\n');
+      setCorrectedContent(correctedContent);
+      setJsonContent(correctedContent);
+      localStorage.setItem('uploadedJsonFile', correctedContent);
+      setValidationError(null);
     } catch (error) {
-      setValidationError("Invalid JSONL format. Each line must be a valid JSON object with a 'messages' key.");
+      setValidationError("Failed to validate and correct JSONL content. Please check your input.");
       setJsonContent('');
+      setCorrectedContent(null);
     }
   };
 
   const handleJsonContentChange = (e) => {
     const content = e.target.value;
-    validateAndSetJsonContent(content);
+    validateAndCorrectJsonContent(content);
+  };
+
+  const applyCorrections = () => {
+    if (correctedContent) {
+      setJsonContent(correctedContent);
+      setCorrectedContent(null);
+    }
   };
 
   return (
@@ -67,6 +93,17 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonCont
         <Alert variant="destructive">
           <AlertTitle>Validation Error</AlertTitle>
           <AlertDescription>{validationError}</AlertDescription>
+        </Alert>
+      )}
+      {correctedContent && (
+        <Alert>
+          <AlertTitle>Content Corrected</AlertTitle>
+          <AlertDescription>
+            Some lines were automatically corrected to match the required format.
+            <Button onClick={applyCorrections} className="mt-2 bg-strawberry-500 hover:bg-strawberry-600 text-white">
+              Apply Corrections
+            </Button>
+          </AlertDescription>
         </Alert>
       )}
       <JsonDisplay jsonContent={jsonContent} />
