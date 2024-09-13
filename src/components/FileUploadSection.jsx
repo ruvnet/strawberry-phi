@@ -6,6 +6,8 @@ import JsonDisplay from './JsonDisplay';
 import ValidationAlert from './ValidationAlert';
 import FileSourceSelector from './FileSourceSelector';
 
+const CHUNK_SIZE = 1024 * 1024; // 1MB chunks
+
 const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonContent, setJsonContent }) => {
   const [validationError, setValidationError] = useState(null);
   const [correctedContent, setCorrectedContent] = useState(null);
@@ -59,12 +61,28 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonCont
       const correctedContent = correctedLines.join('\n');
       setCorrectedContent(correctedContent);
       setJsonContent(correctedContent);
-      localStorage.setItem('uploadedJsonFile', correctedContent);
+      storeContentInChunks(correctedContent);
       setValidationError(null);
     } catch (error) {
       setValidationError(error.message);
       setJsonContent('');
       setCorrectedContent(null);
+    }
+  };
+
+  const storeContentInChunks = (content) => {
+    try {
+      const chunks = [];
+      for (let i = 0; i < content.length; i += CHUNK_SIZE) {
+        chunks.push(content.slice(i, i + CHUNK_SIZE));
+      }
+      chunks.forEach((chunk, index) => {
+        localStorage.setItem(`uploadedJsonFile_${index}`, chunk);
+      });
+      localStorage.setItem('uploadedJsonFile_chunks', chunks.length.toString());
+    } catch (error) {
+      console.error('Error storing content in chunks:', error);
+      setValidationError("Failed to store the file due to storage limitations. Try using a smaller file or clearing some browser storage.");
     }
   };
 
