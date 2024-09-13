@@ -2,18 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronLeft, ChevronRight, RefreshCw, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { useApiKey } from '../contexts/ApiKeyContext';
-import { fetchJobs, fetchJobStatus, fetchJobEvents, deleteJob } from '../utils/openaiApi';
+import { fetchJobs, fetchJobStatus, fetchJobEvents } from '../utils/openaiApi';
 import JobDetailsDialog from '../components/JobDetailsDialog';
-import DeleteJobDialog from '../components/DeleteJobDialog';
 import Pagination from '../components/Pagination';
 import { useToast } from "@/components/ui/use-toast";
 
 const JobStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedJob, setSelectedJob] = useState(null);
-  const [jobToDelete, setJobToDelete] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [totalJobs, setTotalJobs] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -78,35 +76,6 @@ const JobStatus = () => {
     }
   };
 
-  const handleDeleteJob = async (jobId) => {
-    try {
-      await deleteJob(apiKey, jobId);
-      setJobs(jobs.filter(job => job.id !== jobId));
-      setTotalJobs(prevTotal => prevTotal - 1);
-      toast({
-        title: "Success",
-        description: "Job deleted successfully.",
-      });
-      
-      // If we've deleted the last job on the current page, go to the previous page
-      if (jobs.length === 1 && currentPage > 1) {
-        setCurrentPage(prevPage => prevPage - 1);
-      } else if (jobs.length === 0 && totalJobs > 0) {
-        // If there are still jobs but the current page is empty, reload the current page
-        loadJobs();
-      }
-    } catch (error) {
-      console.error('Error deleting job:', error);
-      toast({
-        title: "Error",
-        description: "Failed to delete job. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setJobToDelete(null);
-    }
-  };
-
   const getStatusColor = (status) => {
     switch (status) {
       case 'succeeded': return 'text-green-600';
@@ -161,9 +130,6 @@ const JobStatus = () => {
                     <Button variant="outline" size="sm" onClick={() => setSelectedJob(job)}>
                       View Details
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => setJobToDelete(job)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
                   </div>
                 </TableCell>
               </TableRow>
@@ -180,11 +146,6 @@ const JobStatus = () => {
         job={selectedJob}
         onClose={() => setSelectedJob(null)}
         apiKey={apiKey}
-      />
-      <DeleteJobDialog
-        job={jobToDelete}
-        onClose={() => setJobToDelete(null)}
-        onDelete={handleDeleteJob}
       />
     </div>
   );
