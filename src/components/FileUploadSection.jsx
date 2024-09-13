@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import JsonDisplay from './JsonDisplay';
 import FileSourceSelector from './FileSourceSelector';
 import { useToast } from "@/components/ui/use-toast";
@@ -17,24 +16,17 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonCont
 
   useEffect(() => {
     if (usePreExistingFile) {
-      loadPreExistingFile();
+      handlePreExistingFile();
     }
   }, [usePreExistingFile]);
 
-  const loadPreExistingFile = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch('/finetune/strawberry-phi.jsonl');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const content = await response.text();
-      validateAndSetContent(content);
-    } catch (error) {
-      handleError(`Error loading pre-existing file: ${error.message}`);
-    } finally {
-      setIsLoading(false);
-    }
+  const handlePreExistingFile = () => {
+    setJsonContent(''); // Clear any existing content
+    setValidationError(null);
+    toast({
+      title: "Pre-existing File Selected",
+      description: "Strawberry Phi Data Set - 2500 agentic flows will be used directly from the system.",
+    });
   };
 
   const validateAndSetContent = (content) => {
