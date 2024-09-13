@@ -82,10 +82,19 @@ const JobStatus = () => {
     try {
       await deleteJob(apiKey, jobId);
       setJobs(jobs.filter(job => job.id !== jobId));
+      setTotalJobs(prevTotal => prevTotal - 1);
       toast({
         title: "Success",
         description: "Job deleted successfully.",
       });
+      
+      // If we've deleted the last job on the current page, go to the previous page
+      if (jobs.length === 1 && currentPage > 1) {
+        setCurrentPage(prevPage => prevPage - 1);
+      } else if (jobs.length === 0 && totalJobs > 0) {
+        // If there are still jobs but the current page is empty, reload the current page
+        loadJobs();
+      }
     } catch (error) {
       console.error('Error deleting job:', error);
       toast({
