@@ -13,7 +13,7 @@ const FileSourceSelector = ({ usePreExistingFile, setUsePreExistingFile }) => {
         </div>
         <div className="flex items-center space-x-2">
           <RadioGroupItem value="preExisting" id="preExisting" />
-          <Label htmlFor="preExisting">Use pre-existing file (strawberry-phi.jsonl)</Label>
+          <Label htmlFor="preExisting">Strawberry Phi Data Set - 2500 agentic flows</Label>
         </div>
       </RadioGroup>
     </div>
