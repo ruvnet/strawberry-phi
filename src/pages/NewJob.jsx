@@ -31,7 +31,31 @@ const NewJob = () => {
     }
   }, []);
 
+  const validateJsonContent = (content) => {
+    try {
+      const lines = content.trim().split('\n');
+      lines.forEach(line => {
+        const parsed = JSON.parse(line);
+        if (!parsed.messages || !Array.isArray(parsed.messages)) {
+          throw new Error("Each line must be a JSON object with a 'messages' array");
+        }
+      });
+      return true;
+    } catch (error) {
+      toast({
+        title: "Validation Error",
+        description: `Invalid JSONL format: ${error.message}`,
+        variant: "destructive",
+      });
+      return false;
+    }
+  };
+
   const handleSubmit = async () => {
+    if (!validateJsonContent(jsonContent)) {
+      return;
+    }
+
     setIsLoading(true);
     setApiResponse(null);
     try {
