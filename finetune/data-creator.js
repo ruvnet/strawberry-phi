@@ -27,9 +27,9 @@ async function generateTrainingData(config) {
     const params = {
       model: MODEL_NAME,
       messages: messages,
-      max_tokens: maxTokens,
-      temperature: temperature,
-      n: numRequests,
+      max_tokens: parseInt(maxTokens, 10),
+      temperature: parseFloat(temperature),
+      n: parseInt(numRequests, 10),
     };
 
     for (let attempt = 1; attempt <= RETRY_LIMIT; attempt++) {
@@ -66,8 +66,8 @@ async function generateTrainingData(config) {
     const params = {
       model: MODEL_NAME,
       messages: messages,
-      max_tokens: maxTokens,
-      temperature: temperature,
+      max_tokens: parseInt(maxTokens, 10),
+      temperature: parseFloat(temperature),
     };
 
     for (let attempt = 1; attempt <= RETRY_LIMIT; attempt++) {
