@@ -32,6 +32,8 @@ or creative solutions.`,
   });
 
   const [generatedData, setGeneratedData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -52,6 +54,8 @@ or creative solutions.`,
       return;
     }
 
+    setIsLoading(true);
+    setError(null);
     toast({ title: "Generation Started", description: "Training data generation has begun. This may take a while." });
 
     try {
@@ -59,27 +63,15 @@ or creative solutions.`,
       setGeneratedData(result.trainingData);
       toast({ title: "Generation Complete", description: `${result.numExamples} examples have been generated.` });
     } catch (error) {
-      toast({ title: "Generation Failed", description: error.message, variant: "destructive" });
-    }
-  };
-
-  const handleSaveToLocalStorage = () => {
-    if (generatedData) {
-      localStorage.setItem('trainingData', JSON.stringify(generatedData));
-      toast({ title: "Saved", description: "Training data saved to local storage." });
-    }
-  };
-
-  const handleDownload = () => {
-    if (generatedData) {
-      const dataStr = JSON.stringify(generatedData);
-      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-      const exportFileDefaultName = 'training_data.json';
-
-      const linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', exportFileDefaultName);
-      linkElement.click();
+      console.error('Error generating training data:', error);
+      setError(error.message || 'An unknown error occurred');
+      toast({
+        title: "Generation Failed",
+        description: error.message || 'An unknown error occurred',
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -107,22 +99,28 @@ or creative solutions.`,
               <PromptSection config={config} handleInputChange={handleInputChange} />
             </TabsContent>
           </Tabs>
-          <Button onClick={handleGenerateTrainingData} className="mt-4 bg-strawberry-500 hover:bg-strawberry-600 text-white">
-            Generate Training Data
+          <Button 
+            onClick={handleGenerateTrainingData} 
+            className="mt-4 bg-strawberry-500 hover:bg-strawberry-600 text-white"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Generating...' : 'Generate Training Data'}
           </Button>
         </CardContent>
       </Card>
+      {error && (
+        <Card className="bg-red-100 border-red-300 text-red-800 p-4 mt-4">
+          <CardTitle>Error</CardTitle>
+          <CardContent>{error}</CardContent>
+        </Card>
+      )}
       {generatedData && (
         <Card className="bg-white/50 backdrop-blur-sm border-strawberry-200 mt-4">
           <CardHeader>
             <CardTitle className="text-strawberry-700">Generated Training Data</CardTitle>
           </CardHeader>
           <CardContent>
-            <TrainingDataDisplay 
-              data={generatedData} 
-              onSave={handleSaveToLocalStorage} 
-              onDownload={handleDownload} 
-            />
+            <TrainingDataDisplay data={generatedData} />
           </CardContent>
         </Card>
       )}

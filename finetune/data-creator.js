@@ -1,4 +1,3 @@
-// Import axios for making HTTP requests
 import axios from 'axios';
 
 async function generateTrainingData(config) {
@@ -48,9 +47,9 @@ async function generateTrainingData(config) {
         }
         return userRequests;
       } catch (error) {
-        console.error(`Error generating user requests (Attempt ${attempt}): ${error.message}`);
+        console.error(`Error generating user requests (Attempt ${attempt}):`, error);
         if (attempt === RETRY_LIMIT) {
-          return userRequests;
+          throw error;
         }
         await sleep(BACKOFF_FACTOR * attempt);
       }
@@ -82,9 +81,9 @@ async function generateTrainingData(config) {
         const assistantContent = response.data.choices[0].message.content.trim();
         return assistantContent;
       } catch (error) {
-        console.error(`Error fetching response for prompt '${prompt}' (Attempt ${attempt}): ${error.message}`);
+        console.error(`Error fetching response for prompt '${prompt}' (Attempt ${attempt}):`, error);
         if (attempt === RETRY_LIMIT) {
-          return `Error: ${error.message}`;
+          throw error;
         }
         await sleep(BACKOFF_FACTOR * attempt);
       }
@@ -124,5 +123,4 @@ async function generateTrainingData(config) {
   return { numExamples: trainingData.length, trainingData };
 }
 
-// Export the generateTrainingData function
 export { generateTrainingData };
