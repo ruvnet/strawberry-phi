@@ -9,6 +9,17 @@ const HelpOverview = () => {
         Welcome to the OpenAI Fine-tuning application. This tool allows you to customize GPT models for your specific needs. Here's a quick overview of the main features:
       </p>
       <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="training-data">
+          <AccordionTrigger>Training Data</AccordionTrigger>
+          <AccordionContent>
+            <ul className="list-disc list-inside space-y-2 text-strawberry-600">
+              <li>Generate synthetic training data for fine-tuning your models.</li>
+              <li>Customize parameters like number of examples, temperature, and max tokens.</li>
+              <li>Review, edit, and save generated data for use in fine-tuning jobs.</li>
+              <li>Download generated data as a JSONL file or save to local storage.</li>
+            </ul>
+          </AccordionContent>
+        </AccordionItem>
         <AccordionItem value="fine-tuning">
           <AccordionTrigger>Fine-tuning</AccordionTrigger>
           <AccordionContent>
