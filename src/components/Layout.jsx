@@ -29,6 +29,8 @@ const Layout = ({ children }) => {
   useEffect(() => {
     if (!isApiKeySaved && !apiKey) {
       setShowModal(true);
+    } else {
+      setShowModal(false);
     }
   }, [isApiKeySaved, apiKey]);
 
@@ -45,7 +47,9 @@ const Layout = ({ children }) => {
   };
 
   const handleCloseModal = () => {
-    setShowModal(false);
+    if (isApiKeySaved || apiKey) {
+      setShowModal(false);
+    }
   };
 
   const Sidebar = () => (
