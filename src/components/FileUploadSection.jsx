@@ -5,12 +5,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import JsonDisplay from './JsonDisplay';
 import FileSourceSelector from './FileSourceSelector';
+import { useToast } from "@/components/ui/use-toast";
 
 const CHUNK_SIZE = 1024 * 1024; // 1MB chunks
 
 const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonContent, setJsonContent }) => {
   const [validationError, setValidationError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (usePreExistingFile) {
@@ -28,8 +30,7 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonCont
       const content = await response.text();
       validateAndSetContent(content);
     } catch (error) {
-      setValidationError(`Error loading pre-existing file: ${error.message}`);
-      setUsePreExistingFile(false);
+      handleError(`Error loading pre-existing file: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -46,8 +47,7 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonCont
       setValidationError(null);
       storeContentInChunks(content);
     } catch (error) {
-      setValidationError(`Invalid JSONL format: ${error.message}`);
-      setJsonContent('');
+      handleError(`Invalid JSONL format: ${error.message}`);
     }
   };
 
@@ -62,9 +62,19 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonCont
       });
       localStorage.setItem('uploadedJsonFile_chunks', chunks.length.toString());
     } catch (error) {
-      console.error('Error storing content in chunks:', error);
-      setValidationError("Failed to store the file due to storage limitations.");
+      handleError("Failed to store the file due to storage limitations.");
     }
+  };
+
+  const handleError = (message) => {
+    setValidationError(message);
+    setJsonContent('');
+    setUsePreExistingFile(false);
+    toast({
+      title: "Validation Error",
+      description: message,
+      variant: "destructive",
+    });
   };
 
   const handleJsonContentChange = (e) => {
