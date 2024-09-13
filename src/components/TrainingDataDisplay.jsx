@@ -2,9 +2,11 @@ import React from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from 'react-router-dom';
 
 const TrainingDataDisplay = ({ data }) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const validateAndCorrectData = (inputData) => {
     let correctedData = [];
@@ -55,6 +57,8 @@ const TrainingDataDisplay = ({ data }) => {
           description: "Training data saved to local storage.",
         });
       }
+      // Navigate to the New Job page after saving
+      navigate('/new-job');
     } catch (error) {
       toast({
         title: "Error",

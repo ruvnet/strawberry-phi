@@ -51,8 +51,10 @@ const ConfigurationPanel = ({ config, setConfig }) => {
               type="number"
               value={config.numExamples}
               onChange={handleInputChange}
+              min="10"
               className="border-strawberry-300 focus:border-strawberry-500"
             />
+            <p className="text-xs text-strawberry-600 mt-1">Minimum 10 examples required.</p>
           </div>
           {renderSlider(
             "Temperature",
