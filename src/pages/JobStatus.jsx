@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
+import { ChevronLeft, ChevronRight, RefreshCw, Trash2 } from "lucide-react";
 import { useApiKey } from '../contexts/ApiKeyContext';
-import { fetchJobs, fetchJobStatus, fetchJobEvents } from '../utils/openaiApi';
+import { fetchJobs, fetchJobStatus, fetchJobEvents, deleteJob } from '../utils/openaiApi';
+import JobDetailsDialog from '../components/JobDetailsDialog';
+import DeleteJobDialog from '../components/DeleteJobDialog';
+import Pagination from '../components/Pagination';
 
 const JobStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedJob, setSelectedJob] = useState(null);
-  const [jobEvents, setJobEvents] = useState([]);
+  const [jobToDelete, setJobToDelete] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [totalJobs, setTotalJobs] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,16 +38,6 @@ const JobStatus = () => {
     loadJobs();
   }, [apiKey, currentPage]);
 
-  const totalPages = Math.ceil(totalJobs / jobsPerPage);
-
-  const nextPage = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-  };
-
-  const prevPage = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
-  };
-
   const refreshJobStatus = async (jobId) => {
     if (apiKey) {
       try {
@@ -69,29 +61,23 @@ const JobStatus = () => {
     }
   };
 
-  const loadJobEvents = async (jobId) => {
-    if (apiKey) {
-      try {
-        const events = await fetchJobEvents(apiKey, jobId);
-        setJobEvents(events);
-      } catch (error) {
-        console.error('Error fetching job events:', error);
-      }
+  const handleDeleteJob = async (jobId) => {
+    try {
+      await deleteJob(apiKey, jobId);
+      setJobs(jobs.filter(job => job.id !== jobId));
+      setJobToDelete(null);
+    } catch (error) {
+      console.error('Error deleting job:', error);
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'succeeded':
-        return 'text-green-600';
-      case 'running':
-        return 'text-blue-600';
-      case 'failed':
-        return 'text-red-600';
-      case 'queued':
-        return 'text-yellow-600';
-      default:
-        return 'text-gray-600';
+      case 'succeeded': return 'text-green-600';
+      case 'running': return 'text-blue-600';
+      case 'failed': return 'text-red-600';
+      case 'queued': return 'text-yellow-600';
+      default: return 'text-gray-600';
     }
   };
 
@@ -134,52 +120,12 @@ const JobStatus = () => {
                     <Button variant="outline" size="sm" onClick={() => refreshJobStatus(job.id)}>
                       <RefreshCw className="h-4 w-4 mr-1" /> Refresh
                     </Button>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" onClick={() => {
-                          setSelectedJob(job);
-                          loadJobEvents(job.id);
-                        }}>
-                          View Details
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-[425px]">
-                        <DialogHeader>
-                          <DialogTitle className="text-strawberry-700">Job Details</DialogTitle>
-                        </DialogHeader>
-                        <ScrollArea className="mt-4 h-[300px] rounded-md border p-4">
-                          {selectedJob && (
-                            <div className="space-y-2">
-                              <p><strong>Job ID:</strong> {selectedJob.id}</p>
-                              <p><strong>Model:</strong> {selectedJob.fine_tuned_model || selectedJob.model}</p>
-                              <p><strong>Status:</strong> <span className={getStatusColor(selectedJob.status)}>{selectedJob.status}</span></p>
-                              <p><strong>Created At:</strong> {formatDate(selectedJob.created_at)}</p>
-                              <p><strong>Updated At:</strong> {formatDate(selectedJob.updated_at)}</p>
-                              <p><strong>Organization ID:</strong> {selectedJob.organization_id}</p>
-                              <p><strong>Training File:</strong> {selectedJob.training_file}</p>
-                              <p><strong>Validation File:</strong> {selectedJob.validation_file || 'N/A'}</p>
-                              {selectedJob.result_files && (
-                                <p><strong>Result Files:</strong> {selectedJob.result_files.join(', ')}</p>
-                              )}
-                              {selectedJob.trained_tokens && (
-                                <p><strong>Trained Tokens:</strong> {selectedJob.trained_tokens}</p>
-                              )}
-                              {selectedJob.error && (
-                                <p><strong>Error:</strong> {selectedJob.error.message}</p>
-                              )}
-                              <h3 className="font-semibold mt-4">Job Events:</h3>
-                              <ul className="list-disc pl-5">
-                                {jobEvents.map((event, index) => (
-                                  <li key={index} className="text-sm">
-                                    {formatDate(event.created_at)}: {event.message}
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        </ScrollArea>
-                      </DialogContent>
-                    </Dialog>
+                    <Button variant="outline" size="sm" onClick={() => setSelectedJob(job)}>
+                      View Details
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => setJobToDelete(job)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </TableCell>
               </TableRow>
@@ -187,17 +133,21 @@ const JobStatus = () => {
           </TableBody>
         </Table>
       </div>
-      <div className="flex justify-between items-center">
-        <Button onClick={prevPage} disabled={currentPage === 1} className="bg-strawberry-500 hover:bg-strawberry-600 text-white">
-          <ChevronLeft className="mr-2 h-4 w-4" /> Previous
-        </Button>
-        <span className="text-strawberry-600">
-          Page {currentPage} of {totalPages}
-        </span>
-        <Button onClick={nextPage} disabled={currentPage === totalPages} className="bg-strawberry-500 hover:bg-strawberry-600 text-white">
-          Next <ChevronRight className="ml-2 h-4 w-4" />
-        </Button>
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={Math.ceil(totalJobs / jobsPerPage)}
+        onPageChange={setCurrentPage}
+      />
+      <JobDetailsDialog
+        job={selectedJob}
+        onClose={() => setSelectedJob(null)}
+        apiKey={apiKey}
+      />
+      <DeleteJobDialog
+        job={jobToDelete}
+        onClose={() => setJobToDelete(null)}
+        onDelete={handleDeleteJob}
+      />
     </div>
   );
 };
