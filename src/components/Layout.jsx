@@ -22,8 +22,14 @@ const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const [modalDismissed, setModalDismissed] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const { isApiKeySaved, setApiKey } = useApiKey();
+
+  useEffect(() => {
+    if (!isApiKeySaved) {
+      setShowModal(true);
+    }
+  }, [isApiKeySaved]);
 
   const handleNavigation = (path) => {
     setSidebarOpen(false);
@@ -34,11 +40,11 @@ const Layout = ({ children }) => {
     await setApiKey(apiKeyInput);
     setIsSaving(false);
     setApiKeyInput('');
-    setModalDismissed(true);
+    setShowModal(false);
   };
 
   const handleCloseModal = () => {
-    setModalDismissed(true);
+    setShowModal(false);
   };
 
   const Sidebar = () => (
@@ -106,7 +112,7 @@ const Layout = ({ children }) => {
         </p>
       </footer>
 
-      <Dialog open={!isApiKeySaved && !modalDismissed}>
+      <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent className="sm:max-w-[300px] md:max-w-[350px] bg-gradient-to-br from-pink-100 to-pink-200 rounded-lg shadow-lg m-0">
           <DialogHeader>
             <div className="flex justify-between items-center">
