@@ -42,8 +42,14 @@ export const ApiKeyProvider = ({ children }) => {
     setIsApiKeySaved(true);
   };
 
+  const removeApiKey = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setApiKey(null);
+    setIsApiKeySaved(false);
+  };
+
   return (
-    <ApiKeyContext.Provider value={{ apiKey, setApiKey: setAndEncryptApiKey, isApiKeySaved }}>
+    <ApiKeyContext.Provider value={{ apiKey, setApiKey: setAndEncryptApiKey, isApiKeySaved, removeApiKey }}>
       {children}
     </ApiKeyContext.Provider>
   );
