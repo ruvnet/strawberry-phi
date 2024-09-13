@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +9,22 @@ import FileSourceSelector from './FileSourceSelector';
 const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonContent, setJsonContent }) => {
   const [validationError, setValidationError] = useState(null);
   const [correctedContent, setCorrectedContent] = useState(null);
+
+  useEffect(() => {
+    if (usePreExistingFile) {
+      loadPreExistingFile();
+    }
+  }, [usePreExistingFile]);
+
+  const loadPreExistingFile = async () => {
+    try {
+      const response = await fetch('/strawberry-phi.jsonl');
+      const content = await response.text();
+      validateAndCorrectJsonContent(content);
+    } catch (error) {
+      setValidationError("Error loading pre-existing file: " + error.message);
+    }
+  };
 
   const validateAndCorrectJsonContent = (content) => {
     try {
