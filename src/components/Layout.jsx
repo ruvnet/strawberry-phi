@@ -24,13 +24,13 @@ const Layout = ({ children }) => {
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const { isApiKeySaved, setApiKey } = useApiKey();
+  const { apiKey, isApiKeySaved, setApiKey } = useApiKey();
 
   useEffect(() => {
-    if (!isApiKeySaved) {
+    if (!isApiKeySaved && !apiKey) {
       setShowModal(true);
     }
-  }, [isApiKeySaved]);
+  }, [isApiKeySaved, apiKey]);
 
   const handleNavigation = (path) => {
     setSidebarOpen(false);
