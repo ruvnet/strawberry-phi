@@ -1,11 +1,10 @@
-const fs = require('fs');
-const { Configuration, OpenAIApi } = require('openai');
+// Import axios for making HTTP requests
+import axios from 'axios';
 
 async function generateTrainingData(config) {
   const {
     API_KEY,
     MODEL_NAME,
-    OUTPUT_FILE,
     NUM_EXAMPLES,
     CONCURRENT_REQUESTS,
     RETRY_LIMIT,
@@ -14,11 +13,6 @@ async function generateTrainingData(config) {
     temperature,
     maxTokens
   } = config;
-
-  const configuration = new Configuration({
-    apiKey: API_KEY,
-  });
-  const openai = new OpenAIApi(configuration);
 
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -41,7 +35,12 @@ async function generateTrainingData(config) {
 
     for (let attempt = 1; attempt <= RETRY_LIMIT; attempt++) {
       try {
-        const response = await openai.createChatCompletion(params);
+        const response = await axios.post('https://api.openai.com/v1/chat/completions', params, {
+          headers: {
+            'Authorization': `Bearer ${API_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        });
         const choices = response.data.choices;
         for (const choice of choices) {
           const prompt = choice.message.content.trim();
@@ -74,7 +73,12 @@ async function generateTrainingData(config) {
 
     for (let attempt = 1; attempt <= RETRY_LIMIT; attempt++) {
       try {
-        const response = await openai.createChatCompletion(params);
+        const response = await axios.post('https://api.openai.com/v1/chat/completions', params, {
+          headers: {
+            'Authorization': `Bearer ${API_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        });
         const assistantContent = response.data.choices[0].message.content.trim();
         return assistantContent;
       } catch (error) {
@@ -117,7 +121,6 @@ async function generateTrainingData(config) {
     await Promise.all(batchPromises);
   }
 
-  // Instead of writing to a file, return the training data
   return { numExamples: trainingData.length, trainingData };
 }
 
