@@ -90,9 +90,13 @@ const NewJob = () => {
       });
     } catch (error) {
       setApiResponse({ error: error.message });
+      let errorMessage = error.message;
+      if (error.response && error.response.status === 429) {
+        errorMessage = "You've hit the API rate limit. Please wait a few minutes and try again.";
+      }
       toast({
         title: "Error Creating Job",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -115,6 +119,9 @@ const NewJob = () => {
 
     if (!response.ok) {
       const errorData = await response.json();
+      if (response.status === 429) {
+        throw new Error("Rate limit exceeded. Please wait a few minutes and try again.");
+      }
       throw new Error(errorData.error?.message || 'Failed to upload file');
     }
 
