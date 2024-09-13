@@ -43,7 +43,7 @@ async function generateUserRequests(API_KEY, numRequests) {
     ],
     max_tokens: 200,
     temperature: 0.8,
-    n: numRequests
+    n: parseInt(numRequests, 10) // Ensure numRequests is an integer
   };
 
   const result = await makeRequest('https://api.openai.com/v1/chat/completions', data, headers);
