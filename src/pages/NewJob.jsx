@@ -14,7 +14,7 @@ const NewJob = () => {
   const [activeTab, setActiveTab] = useState("upload");
   const [file, setFile] = useState(null);
   const [jsonContent, setJsonContent] = useState('');
-  const [model, setModel] = useState('gpt-4o');
+  const [model, setModel] = useState('gpt-4o-mini-2024-07-18');
   const [learningRate, setLearningRate] = useState('0.001');
   const [epochs, setEpochs] = useState('3');
   const [batchSize, setBatchSize] = useState('8');
@@ -35,20 +35,23 @@ const NewJob = () => {
     setIsLoading(true);
     setApiResponse(null);
     try {
-      const formData = new FormData();
-      if (usePreExistingFile || jsonContent) {
-        const contentToUse = usePreExistingFile ? await fetch('/finetune/strawberry-phi.jsonl').then(res => res.text()) : jsonContent;
-        const jsonBlob = new Blob([contentToUse], { type: 'application/json' });
-        formData.append('file', jsonBlob, 'training_data.jsonl');
+      let fileId;
+      if (usePreExistingFile) {
+        // Use pre-existing file logic here
+        fileId = 'file-abc123'; // Replace with actual file ID
       } else if (file) {
-        formData.append('file', file);
+        // Upload the file and get the file ID
+        fileId = await uploadFile(file);
+      } else {
+        throw new Error('No file selected');
       }
-      formData.append('model', model);
-      formData.append('learning_rate', learningRate);
-      formData.append('epochs', epochs);
-      formData.append('batch_size', batchSize);
 
-      const response = await createFineTuningJob(apiKey, formData);
+      const jobData = {
+        training_file: fileId,
+        model: model,
+      };
+
+      const response = await createFineTuningJob(apiKey, jobData);
       setApiResponse(response);
       toast({
         title: "Job Created Successfully",
@@ -64,6 +67,27 @@ const NewJob = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const uploadFile = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('purpose', 'fine-tune');
+
+    const response = await fetch('https://api.openai.com/v1/files', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to upload file');
+    }
+
+    const data = await response.json();
+    return data.id;
   };
 
   const isUploadValid = file || usePreExistingFile || jsonContent;

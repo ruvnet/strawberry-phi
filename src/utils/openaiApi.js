@@ -4,7 +4,7 @@ const OPENAI_API_URL = 'https://api.openai.com/v1';
 
 export const fetchJobs = async (apiKey, page = 1, limit = 10) => {
   try {
-    const response = await axios.get(`${OPENAI_API_URL}/fine-tunes`, {
+    const response = await axios.get(`${OPENAI_API_URL}/fine_tuning/jobs`, {
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
@@ -25,12 +25,12 @@ export const fetchJobs = async (apiKey, page = 1, limit = 10) => {
   }
 };
 
-export const createFineTuningJob = async (apiKey, formData) => {
+export const createFineTuningJob = async (apiKey, jobData) => {
   try {
-    const response = await axios.post(`${OPENAI_API_URL}/fine-tunes`, formData, {
+    const response = await axios.post(`${OPENAI_API_URL}/fine_tuning/jobs`, jobData, {
       headers: {
         'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'application/json'
       }
     });
     return response.data;
@@ -42,7 +42,7 @@ export const createFineTuningJob = async (apiKey, formData) => {
 
 export const fetchJobStatus = async (apiKey, jobId) => {
   try {
-    const response = await axios.get(`${OPENAI_API_URL}/fine-tunes/${jobId}`, {
+    const response = await axios.get(`${OPENAI_API_URL}/fine_tuning/jobs/${jobId}`, {
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
@@ -57,7 +57,7 @@ export const fetchJobStatus = async (apiKey, jobId) => {
 
 export const fetchJobEvents = async (apiKey, jobId) => {
   try {
-    const response = await axios.get(`${OPENAI_API_URL}/fine-tunes/${jobId}/events`, {
+    const response = await axios.get(`${OPENAI_API_URL}/fine_tuning/jobs/${jobId}/events`, {
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
