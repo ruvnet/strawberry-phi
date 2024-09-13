@@ -69,3 +69,18 @@ export const fetchJobEvents = async (apiKey, jobId) => {
     throw error;
   }
 };
+
+export const deleteJob = async (apiKey, jobId) => {
+  try {
+    const response = await axios.delete(`${OPENAI_API_URL}/fine_tuning/jobs/${jobId}`, {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting job from OpenAI:', error);
+    throw error;
+  }
+};
