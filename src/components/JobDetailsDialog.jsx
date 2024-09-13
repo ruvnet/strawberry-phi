@@ -16,6 +16,21 @@ const JobDetailsDialog = ({ job, onClose, apiKey }) => {
 
   const formatDate = (dateString) => new Date(dateString).toLocaleString();
 
+  const getStatusColor = (status) => {
+    switch (status.toLowerCase()) {
+      case 'succeeded':
+        return 'text-green-600';
+      case 'running':
+        return 'text-blue-600';
+      case 'failed':
+        return 'text-red-600';
+      case 'queued':
+        return 'text-yellow-600';
+      default:
+        return 'text-gray-600';
+    }
+  };
+
   return (
     <Dialog open={!!job} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
