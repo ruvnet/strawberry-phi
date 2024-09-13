@@ -24,32 +24,7 @@ const TrainingData = () => {
 Requests should cover various domains such as marketing, finance, technology, 
 healthcare, education, and more. Each request should be a complex task that 
 an executive or professional might ask, requiring detailed analysis, planning, 
-or creative solutions.
-
-This configuration file defines an advanced multi-modal, agentic AI assistant named **AdvancedMultiModalAgenticAssistant**, built upon the **phi-mini-128k** base model. Designed to handle complex tasks across various domains, it leverages Glaive's schema-based approach and synthetic data generation capabilities for customization and efficiency.
-
-**Agentic Approaches:**
-The assistant incorporates a variety of AI methodologies, including sequential, concurrent, recurrent, and reinforcement learning techniques. It also utilizes advanced strategies like Q* and other hybrid approaches to enhance task management, planning, and execution.
-
-**Dataset Schema:**
-A comprehensive dataset schema defines structured input and output formats, encompassing fields for task understanding, planning, execution, and self-reflection. This structured approach ensures the assistant can effectively interpret and manage complex tasks.
-
-**Training Parameters:**
-The training process specifies key parameters such as the number of epochs, batch size, and learning rate. It outlines both initial and specialized training phases, with provisions for continual learning to adapt over time.
-
-**Evaluation Metrics:**
-Various metrics are listed to assess model performance, including accuracy, efficiency, and error rates. Performance tracking allows for ongoing optimization and ensures the assistant meets desired standards.
-
-**Advanced Features:**
-
-- **Error Handling Mechanisms:** Robust systems are in place to detect and correct errors during task execution.
-- **Bias Mitigation Strategies:** Techniques are employed to minimize biases in the assistant's responses.
-- **Personalization Capabilities:** The model can adapt to individual user preferences for a tailored experience.
-- **Performance Tracking:** Continuous monitoring of performance metrics enables ongoing improvement.
-- **Multi-Task Learning Support:** The assistant can handle multiple tasks simultaneously, increasing productivity.
-- **Human-in-the-Loop Integration:** Incorporates human feedback to refine and enhance outputs.
-
-By combining these components, the **AdvancedMultiModalAgenticAssistant** is equipped to manage complex, multi-modal tasks effectively. Its design emphasizes adaptability, efficiency, and continuous improvement, making it a versatile tool suitable for a wide range of applications. The integration of advanced methodologies and comprehensive training strategies positions it as a cutting-edge solution in the field of AI assistants.`,
+or creative solutions.`,
   });
   const [generatedData, setGeneratedData] = useState(null);
   const [rawResponse, setRawResponse] = useState('');
