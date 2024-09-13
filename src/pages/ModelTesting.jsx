@@ -2,12 +2,9 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
-import ModelSelector from '../components/ModelSelector';
 import { useApiKey } from '../contexts/ApiKeyContext';
-import ReactMarkdown from 'react-markdown';
 import { useToast } from "@/components/ui/use-toast";
+import ModelSelector from '../components/ModelSelector';
 import ParameterControls from '../components/ParameterControls';
 import ResponseDisplay from '../components/ResponseDisplay';
 
@@ -15,7 +12,7 @@ const ModelTesting = () => {
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('');
   const [rawResponse, setRawResponse] = useState('');
-  const [selectedModel, setSelectedModel] = useState('gpt-4');
+  const [selectedModel, setSelectedModel] = useState('gpt-3.5-turbo');
   const [parameters, setParameters] = useState({
     temperature: 0.7,
     maxTokens: 150,
@@ -48,7 +45,6 @@ const ModelTesting = () => {
 
       if (isO1Model) {
         params.max_completion_tokens = parameters.maxTokens;
-        // For o1 models, temperature is always 1
         params.temperature = 1;
       } else {
         params.max_tokens = parameters.maxTokens;
@@ -73,12 +69,10 @@ const ModelTesting = () => {
       setRawResponse(JSON.stringify(data, null, 2));
 
       if (isO1Model) {
-        // Handle o1 model response
         const content = data.choices[0].message.content;
         const refusal = data.choices[0].message.refusal;
         setResponse(content || refusal || "No content or refusal message provided.");
       } else {
-        // Handle non-o1 model response
         setResponse(data.choices[0].message.content);
       }
     } catch (error) {
@@ -102,7 +96,7 @@ const ModelTesting = () => {
             <CardTitle className="text-strawberry-700">Select Model and Configure Parameters</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ModelSelector onModelSelect={setSelectedModel} defaultModel="gpt-4" />
+            <ModelSelector onModelSelect={setSelectedModel} defaultModel={selectedModel} />
             <ParameterControls
               parameters={parameters}
               setParameters={setParameters}

@@ -1,16 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useApiKey } from '../contexts/ApiKeyContext';
+import axios from 'axios';
 
 const ModelSelector = ({ onModelSelect, defaultModel }) => {
-  const models = [
-    { id: 'gpt-4', name: 'GPT-4' },
-    { id: 'gpt-4-32k', name: 'GPT-4 (32k context)' },
-    { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo' },
-    { id: 'gpt-3.5-turbo-16k', name: 'GPT-3.5 Turbo (16k context)' },
-    { id: 'gpt-4o-2024-08-06', name: 'GPT-4o (2024-08-06)' },
-    { id: 'gpt-4o-mini-2024-07-18', name: 'GPT-4o mini (2024-07-18)' },
-    { id: 'gpt-4o-2024-05-13', name: 'GPT-4o (2024-05-13)' },
-  ];
+  const [models, setModels] = useState([]);
+  const { apiKey } = useApiKey();
+
+  useEffect(() => {
+    const fetchModels = async () => {
+      try {
+        const response = await axios.get('https://api.openai.com/v1/models', {
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+          },
+        });
+        const allModels = response.data.data;
+        const relevantModels = allModels.filter(model => 
+          model.id.startsWith('gpt-') || model.id.includes('ft-')
+        );
+        setModels(relevantModels);
+      } catch (error) {
+        console.error('Error fetching models:', error);
+      }
+    };
+
+    if (apiKey) {
+      fetchModels();
+    }
+  }, [apiKey]);
 
   return (
     <div className="space-y-4">
@@ -19,9 +37,9 @@ const ModelSelector = ({ onModelSelect, defaultModel }) => {
           <SelectValue placeholder="Select a model" />
         </SelectTrigger>
         <SelectContent>
-          {models.map((m) => (
-            <SelectItem key={m.id} value={m.id}>
-              {m.name}
+          {models.map((model) => (
+            <SelectItem key={model.id} value={model.id}>
+              {model.id}
             </SelectItem>
           ))}
         </SelectContent>
