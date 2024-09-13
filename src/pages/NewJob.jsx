@@ -28,7 +28,10 @@ const NewJob = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (usePreExistingFile) {
+    const storedData = localStorage.getItem('trainingData');
+    if (storedData) {
+      setJsonContent(storedData);
+    } else if (usePreExistingFile) {
       fetch('/finetune/strawberry-phi.jsonl')
         .then(response => response.text())
         .then(data => setJsonContent(data))
@@ -73,8 +76,7 @@ const NewJob = () => {
       <p className="text-strawberry-600 mb-6">
         Create a new fine-tuning job to customize GPT models for your specific needs. 
         Follow the steps below to upload your training data, select a model, and configure 
-        the fine-tuning parameters. This process will help you create a model that's 
-        tailored to your unique use case.
+        the fine-tuning parameters.
       </p>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 bg-pink-100">
@@ -96,27 +98,10 @@ const NewJob = () => {
               <Button onClick={() => setActiveTab("model")} disabled={!file && !usePreExistingFile} className="bg-strawberry-500 hover:bg-strawberry-600 text-white mt-4">Continue</Button>
             </TabsContent>
             <TabsContent value="model">
-              <div className="space-y-4">
-                <Label className="text-strawberry-600">Select Model</Label>
-                <RadioGroup defaultValue={model} onValueChange={setModel}>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="gpt-4o" id="gpt4o" className="border-strawberry-400 text-strawberry-600" />
-                    <Label htmlFor="gpt4o" className="text-strawberry-600">GPT-4o</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="gpt-4o-mini" id="gpt4omini" className="border-strawberry-400 text-strawberry-600" />
-                    <Label htmlFor="gpt4omini" className="text-strawberry-600">GPT-4o-mini</Label>
-                  </div>
-                </RadioGroup>
-                <Textarea
-                  className="mt-2 text-strawberry-600"
-                  readOnly
-                  value={`${model === 'gpt-4o' ? 'GPT-4o is the full-sized model with maximum capabilities, suitable for complex tasks and high-quality outputs.' : 'GPT-4o-mini is a smaller version that offers faster processing and lower resource requirements, suitable for quicker deployments or less complex tasks.'}`}
-                />
-                <div className="space-x-2">
-                  <Button onClick={() => setActiveTab("upload")} variant="outline" className="border-strawberry-300 text-strawberry-600">Back</Button>
-                  <Button onClick={() => setActiveTab("configure")} className="bg-strawberry-500 hover:bg-strawberry-600 text-white">Continue</Button>
-                </div>
+              <ModelSelection model={model} setModel={setModel} />
+              <div className="space-x-2 mt-4">
+                <Button onClick={() => setActiveTab("upload")} variant="outline" className="border-strawberry-300 text-strawberry-600">Back</Button>
+                <Button onClick={() => setActiveTab("configure")} className="bg-strawberry-500 hover:bg-strawberry-600 text-white">Continue</Button>
               </div>
             </TabsContent>
             <TabsContent value="configure">
@@ -141,5 +126,26 @@ const NewJob = () => {
     </div>
   );
 };
+
+const ModelSelection = ({ model, setModel }) => (
+  <div className="space-y-4">
+    <Label className="text-strawberry-600">Select Model</Label>
+    <RadioGroup defaultValue={model} onValueChange={setModel}>
+      <div className="flex items-center space-x-2">
+        <RadioGroupItem value="gpt-4o" id="gpt4o" className="border-strawberry-400 text-strawberry-600" />
+        <Label htmlFor="gpt4o" className="text-strawberry-600">GPT-4o</Label>
+      </div>
+      <div className="flex items-center space-x-2">
+        <RadioGroupItem value="gpt-4o-mini" id="gpt4omini" className="border-strawberry-400 text-strawberry-600" />
+        <Label htmlFor="gpt4omini" className="text-strawberry-600">GPT-4o-mini</Label>
+      </div>
+    </RadioGroup>
+    <Textarea
+      className="mt-2 text-strawberry-600"
+      readOnly
+      value={`${model === 'gpt-4o' ? 'GPT-4o is the full-sized model with maximum capabilities, suitable for complex tasks and high-quality outputs.' : 'GPT-4o-mini is a smaller version that offers faster processing and lower resource requirements, suitable for quicker deployments or less complex tasks.'}`}
+    />
+  </div>
+);
 
 export default NewJob;

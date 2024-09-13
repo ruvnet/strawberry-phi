@@ -9,9 +9,8 @@ import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { useApiKey } from '../contexts/ApiKeyContext';
-
-// Import the generateTrainingData function
 import { generateTrainingData } from '../../finetune/data-creator';
+import TrainingDataDisplay from '../components/TrainingDataDisplay';
 
 const TrainingData = () => {
   const { toast } = useToast();
@@ -49,44 +48,38 @@ or creative solutions.`,
 
   const handleGenerateTrainingData = async () => {
     if (!apiKey) {
-      toast({
-        title: "API Key Missing",
-        description: "Please set your OpenAI API key in the Settings page.",
-        variant: "destructive",
-      });
+      toast({ title: "API Key Missing", description: "Please set your OpenAI API key in the Settings page.", variant: "destructive" });
       return;
     }
 
-    toast({
-      title: "Generation Started",
-      description: "Training data generation has begun. This may take a while.",
-    });
+    toast({ title: "Generation Started", description: "Training data generation has begun. This may take a while." });
 
     try {
-      const result = await generateTrainingData({
-        ...config,
-        API_KEY: apiKey,
-        MODEL_NAME: config.modelName,
-        OUTPUT_FILE: config.outputFile,
-        NUM_EXAMPLES: config.numExamples,
-        CONCURRENT_REQUESTS: config.concurrentRequests,
-        RETRY_LIMIT: config.retryLimit,
-        BACKOFF_FACTOR: config.backoffFactor,
-        GUIDANCE_PROMPT: config.guidancePrompt,
-      });
-
+      const result = await generateTrainingData({ ...config, API_KEY: apiKey });
       setGeneratedData(result.trainingData);
-
-      toast({
-        title: "Generation Complete",
-        description: `${result.numExamples} examples have been generated.`,
-      });
+      toast({ title: "Generation Complete", description: `${result.numExamples} examples have been generated.` });
     } catch (error) {
-      toast({
-        title: "Generation Failed",
-        description: error.message,
-        variant: "destructive",
-      });
+      toast({ title: "Generation Failed", description: error.message, variant: "destructive" });
+    }
+  };
+
+  const handleSaveToLocalStorage = () => {
+    if (generatedData) {
+      localStorage.setItem('trainingData', JSON.stringify(generatedData));
+      toast({ title: "Saved", description: "Training data saved to local storage." });
+    }
+  };
+
+  const handleDownload = () => {
+    if (generatedData) {
+      const dataStr = JSON.stringify(generatedData);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      const exportFileDefaultName = 'training_data.json';
+
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
     }
   };
 
@@ -105,80 +98,13 @@ or creative solutions.`,
               <TabsTrigger value="prompt" className="bg-pink-100 data-[state=active]:bg-pink-200">Prompt</TabsTrigger>
             </TabsList>
             <TabsContent value="basic">
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="modelName">Model Name</Label>
-                  <Select value={config.modelName} onValueChange={(value) => handleSelectChange('modelName', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select model" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="gpt-o1-mini">GPT-o1-mini</SelectItem>
-                      <SelectItem value="gpt-o1">GPT-o1</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="numExamples">Number of Examples</Label>
-                  <Input id="numExamples" name="numExamples" value={config.numExamples} onChange={handleInputChange} type="number" />
-                </div>
-                <div>
-                  <Label htmlFor="outputFile">Output File Name</Label>
-                  <Input id="outputFile" name="outputFile" value={config.outputFile} onChange={handleInputChange} />
-                </div>
-              </div>
+              <ConfigSection config={config} handleInputChange={handleInputChange} handleSelectChange={handleSelectChange} />
             </TabsContent>
             <TabsContent value="advanced">
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="concurrentRequests">Concurrent Requests</Label>
-                  <Slider
-                    id="concurrentRequests"
-                    min={1}
-                    max={20}
-                    step={1}
-                    value={[config.concurrentRequests]}
-                    onValueChange={(value) => handleSliderChange('concurrentRequests', value)}
-                  />
-                  <span>{config.concurrentRequests}</span>
-                </div>
-                <div>
-                  <Label htmlFor="retryLimit">Retry Limit</Label>
-                  <Input id="retryLimit" name="retryLimit" value={config.retryLimit} onChange={handleInputChange} type="number" />
-                </div>
-                <div>
-                  <Label htmlFor="backoffFactor">Backoff Factor</Label>
-                  <Input id="backoffFactor" name="backoffFactor" value={config.backoffFactor} onChange={handleInputChange} type="number" />
-                </div>
-                <div>
-                  <Label htmlFor="temperature">Temperature</Label>
-                  <Slider
-                    id="temperature"
-                    min={0}
-                    max={1}
-                    step={0.1}
-                    value={[config.temperature]}
-                    onValueChange={(value) => handleSliderChange('temperature', value)}
-                  />
-                  <span>{config.temperature}</span>
-                </div>
-                <div>
-                  <Label htmlFor="maxTokens">Max Tokens</Label>
-                  <Input id="maxTokens" name="maxTokens" value={config.maxTokens} onChange={handleInputChange} type="number" />
-                </div>
-              </div>
+              <AdvancedConfigSection config={config} handleInputChange={handleInputChange} handleSliderChange={handleSliderChange} />
             </TabsContent>
             <TabsContent value="prompt">
-              <div>
-                <Label htmlFor="guidancePrompt">Guidance Prompt</Label>
-                <Textarea
-                  id="guidancePrompt"
-                  name="guidancePrompt"
-                  value={config.guidancePrompt}
-                  onChange={handleInputChange}
-                  rows={10}
-                />
-              </div>
+              <PromptSection config={config} handleInputChange={handleInputChange} />
             </TabsContent>
           </Tabs>
           <Button onClick={handleGenerateTrainingData} className="mt-4 bg-strawberry-500 hover:bg-strawberry-600 text-white">
@@ -192,14 +118,88 @@ or creative solutions.`,
             <CardTitle className="text-strawberry-700">Generated Training Data</CardTitle>
           </CardHeader>
           <CardContent>
-            <pre className="whitespace-pre-wrap overflow-auto max-h-96">
-              {JSON.stringify(generatedData, null, 2)}
-            </pre>
+            <TrainingDataDisplay 
+              data={generatedData} 
+              onSave={handleSaveToLocalStorage} 
+              onDownload={handleDownload} 
+            />
           </CardContent>
         </Card>
       )}
     </div>
   );
 };
+
+const ConfigSection = ({ config, handleInputChange, handleSelectChange }) => (
+  <div className="space-y-4">
+    <div>
+      <Label htmlFor="modelName">Model Name</Label>
+      <Select value={config.modelName} onValueChange={(value) => handleSelectChange('modelName', value)}>
+        <SelectTrigger>
+          <SelectValue placeholder="Select model" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="gpt-o1-mini">GPT-o1-mini</SelectItem>
+          <SelectItem value="gpt-o1">GPT-o1</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+    <div>
+      <Label htmlFor="numExamples">Number of Examples</Label>
+      <Input id="numExamples" name="numExamples" value={config.numExamples} onChange={handleInputChange} type="number" />
+    </div>
+    <div>
+      <Label htmlFor="outputFile">Output File Name</Label>
+      <Input id="outputFile" name="outputFile" value={config.outputFile} onChange={handleInputChange} />
+    </div>
+  </div>
+);
+
+const AdvancedConfigSection = ({ config, handleInputChange, handleSliderChange }) => (
+  <div className="space-y-4">
+    <SliderInput label="Concurrent Requests" id="concurrentRequests" value={config.concurrentRequests} onChange={handleSliderChange} min={1} max={20} step={1} />
+    <SliderInput label="Temperature" id="temperature" value={config.temperature} onChange={handleSliderChange} min={0} max={1} step={0.1} />
+    <div>
+      <Label htmlFor="retryLimit">Retry Limit</Label>
+      <Input id="retryLimit" name="retryLimit" value={config.retryLimit} onChange={handleInputChange} type="number" />
+    </div>
+    <div>
+      <Label htmlFor="backoffFactor">Backoff Factor</Label>
+      <Input id="backoffFactor" name="backoffFactor" value={config.backoffFactor} onChange={handleInputChange} type="number" />
+    </div>
+    <div>
+      <Label htmlFor="maxTokens">Max Tokens</Label>
+      <Input id="maxTokens" name="maxTokens" value={config.maxTokens} onChange={handleInputChange} type="number" />
+    </div>
+  </div>
+);
+
+const SliderInput = ({ label, id, value, onChange, min, max, step }) => (
+  <div>
+    <Label htmlFor={id}>{label}</Label>
+    <Slider
+      id={id}
+      min={min}
+      max={max}
+      step={step}
+      value={[value]}
+      onValueChange={(value) => onChange(id, value)}
+    />
+    <span>{value}</span>
+  </div>
+);
+
+const PromptSection = ({ config, handleInputChange }) => (
+  <div>
+    <Label htmlFor="guidancePrompt">Guidance Prompt</Label>
+    <Textarea
+      id="guidancePrompt"
+      name="guidancePrompt"
+      value={config.guidancePrompt}
+      onChange={handleInputChange}
+      rows={10}
+    />
+  </div>
+);
 
 export default TrainingData;
