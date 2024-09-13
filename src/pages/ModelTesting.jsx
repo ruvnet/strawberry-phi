@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import ModelSelector from '../components/ModelSelector';
 import { useApiKey } from '../contexts/ApiKeyContext';
 import ReactMarkdown from 'react-markdown';
+import { useToast } from "@/components/ui/use-toast";
 
 const ModelTesting = () => {
   const [prompt, setPrompt] = useState('');
@@ -20,30 +21,43 @@ const ModelTesting = () => {
   const [frequencyPenalty, setFrequencyPenalty] = useState(0);
   const [presencePenalty, setPresencePenalty] = useState(0);
   const { apiKey } = useApiKey();
+  const { toast } = useToast();
 
   const testModel = async () => {
     if (!apiKey) {
-      setResponse('API key not found. Please set your API key in the Settings page.');
-      setRawResponse(JSON.stringify({ error: 'API key not found' }, null, 2));
+      toast({
+        title: "API Key Missing",
+        description: "Please set your OpenAI API key in the Settings page.",
+        variant: "destructive",
+      });
       return;
     }
 
     try {
+      const isO1Model = selectedModel.includes('o1');
+      const params = {
+        model: selectedModel,
+        messages: [{ role: "user", content: prompt }],
+        temperature: temperature,
+        top_p: topP,
+        frequency_penalty: frequencyPenalty,
+        presence_penalty: presencePenalty,
+      };
+
+      // Use the correct parameter based on the model
+      if (isO1Model) {
+        params.max_completion_tokens = maxTokens;
+      } else {
+        params.max_tokens = maxTokens;
+      }
+
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey}`,
         },
-        body: JSON.stringify({
-          model: selectedModel,
-          messages: [{ role: "user", content: prompt }],
-          max_tokens: maxTokens,
-          temperature: temperature,
-          top_p: topP,
-          frequency_penalty: frequencyPenalty,
-          presence_penalty: presencePenalty,
-        }),
+        body: JSON.stringify(params),
       });
 
       const data = await response.json();
@@ -56,6 +70,11 @@ const ModelTesting = () => {
       setRawResponse(JSON.stringify(data, null, 2));
     } catch (error) {
       console.error('Error testing model:', error);
+      toast({
+        title: "Error Testing Model",
+        description: error.message,
+        variant: "destructive",
+      });
       setResponse(`Error: ${error.message}`);
       setRawResponse(JSON.stringify({ error: error.message }, null, 2));
     }
