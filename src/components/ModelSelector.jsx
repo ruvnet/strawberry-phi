@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useApiKey } from '../contexts/ApiKeyContext';
 import axios from 'axios';
 
-const ModelSelector = ({ onModelSelect, defaultModel }) => {
+const ModelSelector = ({ onModelSelect, defaultModel, forFineTuning = false }) => {
   const [models, setModels] = useState([]);
   const { apiKey } = useApiKey();
 
@@ -16,9 +16,18 @@ const ModelSelector = ({ onModelSelect, defaultModel }) => {
           },
         });
         const allModels = response.data.data;
-        const relevantModels = allModels.filter(model => 
-          model.id.startsWith('gpt-') || model.id.includes('ft-') || model.id.startsWith('ft:')
-        );
+        let relevantModels;
+        if (forFineTuning) {
+          relevantModels = [
+            'gpt-4o-2024-08-06',
+            'gpt-4o-mini-2024-07-18',
+            'gpt-4o-2024-05-13'
+          ].filter(modelId => allModels.some(model => model.id === modelId));
+        } else {
+          relevantModels = allModels.filter(model => 
+            model.id.startsWith('gpt-') || model.id.includes('ft-') || model.id.startsWith('ft:')
+          );
+        }
         setModels(relevantModels);
       } catch (error) {
         console.error('Error fetching models:', error);
@@ -28,7 +37,7 @@ const ModelSelector = ({ onModelSelect, defaultModel }) => {
     if (apiKey) {
       fetchModels();
     }
-  }, [apiKey]);
+  }, [apiKey, forFineTuning]);
 
   const formatModelName = (modelId) => {
     if (modelId.startsWith('ft:')) {
@@ -46,8 +55,8 @@ const ModelSelector = ({ onModelSelect, defaultModel }) => {
         </SelectTrigger>
         <SelectContent>
           {models.map((model) => (
-            <SelectItem key={model.id} value={model.id}>
-              {formatModelName(model.id)}
+            <SelectItem key={model.id || model} value={model.id || model}>
+              {formatModelName(model.id || model)}
             </SelectItem>
           ))}
         </SelectContent>
