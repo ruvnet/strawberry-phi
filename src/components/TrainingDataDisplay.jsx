@@ -40,7 +40,8 @@ const TrainingDataDisplay = ({ data }) => {
   const handleSaveToLocalStorage = () => {
     try {
       const { correctedData, errors } = validateAndCorrectData(data);
-      localStorage.setItem('trainingData', JSON.stringify(correctedData));
+      const jsonlData = correctedData.map(item => JSON.stringify(item)).join('\n');
+      localStorage.setItem('trainingData', jsonlData);
       
       if (errors.length > 0) {
         toast({
@@ -65,8 +66,8 @@ const TrainingDataDisplay = ({ data }) => {
 
   const handleDownload = () => {
     const { correctedData, errors } = validateAndCorrectData(data);
-    const dataStr = correctedData.map(item => JSON.stringify(item)).join('\n');
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const jsonlData = correctedData.map(item => JSON.stringify(item)).join('\n');
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(jsonlData);
     const exportFileDefaultName = 'training_data.jsonl';
 
     const linkElement = document.createElement('a');
