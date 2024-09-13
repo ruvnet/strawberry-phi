@@ -90,7 +90,7 @@ const JobStatus = () => {
     return new Date(dateString).toLocaleString();
   };
 
-  const totalPages = Math.ceil(totalJobs / jobsPerPage);
+  const totalPages = Math.max(1, Math.ceil(totalJobs / jobsPerPage));
 
   return (
     <div className="space-y-4">
