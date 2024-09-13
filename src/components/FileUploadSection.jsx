@@ -4,39 +4,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Textarea } from "@/components/ui/textarea";
 import JsonDisplay from './JsonDisplay';
 
-const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, file, setFile, jsonContent, setJsonContent }) => {
+const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonContent, setJsonContent }) => {
   const [validationError, setValidationError] = useState(null);
-
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-    
-    if (selectedFile) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const content = event.target.result;
-        validateAndSetJsonContent(content);
-      };
-      reader.readAsText(selectedFile);
-    }
-  };
 
   const validateAndSetJsonContent = (content) => {
     try {
       const lines = content.trim().split('\n');
       const parsedLines = lines.map(line => JSON.parse(line));
       
-      if (parsedLines.every(line => typeof line === 'object' && line !== null)) {
+      if (parsedLines.every(line => typeof line === 'object' && line !== null && 'messages' in line)) {
         setJsonContent(content);
         localStorage.setItem('uploadedJsonFile', content);
         setValidationError(null);
       } else {
-        throw new Error("Each line must be a valid JSON object");
+        throw new Error("Each line must be a valid JSON object with a 'messages' key");
       }
     } catch (error) {
-      setValidationError("Invalid JSONL format. Each line must be a valid JSON object.");
+      setValidationError("Invalid JSONL format. Each line must be a valid JSON object with a 'messages' key.");
       setJsonContent('');
     }
   };
@@ -63,23 +50,17 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, file, se
       </div>
       {!usePreExistingFile && (
         <div>
-          <Label htmlFor="file" className="text-strawberry-600">Upload JSONL File</Label>
-          <Input id="file" type="file" accept=".jsonl" onChange={handleFileChange} className="border-strawberry-300 focus:border-strawberry-500" />
-          <p className="text-sm text-strawberry-600 mt-2">
-            Only JSONL files are accepted. Each line must be a valid JSON object.
-          </p>
-        </div>
-      )}
-      {!usePreExistingFile && (
-        <div>
           <Label htmlFor="jsonContent" className="text-strawberry-600">JSONL Content</Label>
-          <textarea
+          <Textarea
             id="jsonContent"
             value={jsonContent}
             onChange={handleJsonContentChange}
             className="w-full h-40 p-2 border rounded border-strawberry-300 focus:border-strawberry-500"
-            placeholder="Paste your JSONL content here. Each line should be a valid JSON object."
+            placeholder="Paste your JSONL content here. Each line should be a valid JSON object with a 'messages' key."
           />
+          <p className="text-sm text-strawberry-600 mt-2">
+            Only JSONL format is accepted. Each line must be a valid JSON object with a 'messages' key.
+          </p>
         </div>
       )}
       {validationError && (

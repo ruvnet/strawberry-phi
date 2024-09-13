@@ -12,7 +12,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 const NewJob = () => {
   const [activeTab, setActiveTab] = useState("upload");
-  const [file, setFile] = useState(null);
   const [jsonContent, setJsonContent] = useState('');
   const [model, setModel] = useState('gpt-4o-2024-08-06');
   const [learningRate, setLearningRate] = useState('0.001');
@@ -50,6 +49,11 @@ const NewJob = () => {
       const jobData = {
         training_file: fileId,
         model: model,
+        hyperparameters: {
+          learning_rate_multiplier: parseFloat(learningRate),
+          n_epochs: parseInt(epochs, 10),
+          batch_size: parseInt(batchSize, 10)
+        }
       };
 
       const response = await createFineTuningJob(apiKey, jobData);
@@ -92,7 +96,7 @@ const NewJob = () => {
     return data.id;
   };
 
-  const isUploadValid = file || usePreExistingFile || jsonContent;
+  const isUploadValid = usePreExistingFile || jsonContent;
 
   return (
     <div className="space-y-4">
@@ -114,8 +118,6 @@ const NewJob = () => {
               <FileUploadSection
                 usePreExistingFile={usePreExistingFile}
                 setUsePreExistingFile={setUsePreExistingFile}
-                file={file}
-                setFile={setFile}
                 jsonContent={jsonContent}
                 setJsonContent={setJsonContent}
               />
