@@ -14,7 +14,7 @@ const NewJob = () => {
   const [activeTab, setActiveTab] = useState("upload");
   const [file, setFile] = useState(null);
   const [jsonContent, setJsonContent] = useState('');
-  const [model, setModel] = useState('gpt-4o-mini-2024-07-18');
+  const [model, setModel] = useState('gpt-4o-2024-08-06');
   const [learningRate, setLearningRate] = useState('0.001');
   const [epochs, setEpochs] = useState('3');
   const [batchSize, setBatchSize] = useState('8');
@@ -37,13 +37,14 @@ const NewJob = () => {
     try {
       let fileId;
       if (usePreExistingFile) {
-        // Use pre-existing file logic here
-        fileId = 'file-abc123'; // Replace with actual file ID
-      } else if (file) {
-        // Upload the file and get the file ID
+        fileId = 'file-abc123'; // Replace with actual file ID for pre-existing file
+      } else if (jsonContent) {
+        // Convert jsonContent to a File object
+        const blob = new Blob([jsonContent], { type: 'application/json' });
+        const file = new File([blob], 'training_data.jsonl', { type: 'application/json' });
         fileId = await uploadFile(file);
       } else {
-        throw new Error('No file selected');
+        throw new Error('No file selected or JSONL content provided');
       }
 
       const jobData = {
@@ -83,7 +84,8 @@ const NewJob = () => {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to upload file');
+      const errorData = await response.json();
+      throw new Error(errorData.error?.message || 'Failed to upload file');
     }
 
     const data = await response.json();
