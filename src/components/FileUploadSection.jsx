@@ -6,6 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import JsonDisplay from './JsonDisplay';
 import FileSourceSelector from './FileSourceSelector';
 import { useToast } from "@/components/ui/use-toast";
+import ValidationAlert from './ValidationAlert';
 
 const CHUNK_SIZE = 1024 * 1024; // 1MB chunks
 
@@ -61,8 +62,12 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonCont
         localStorage.setItem(`uploadedJsonFile_${index}`, chunk);
       });
       localStorage.setItem('uploadedJsonFile_chunks', chunks.length.toString());
+      toast({
+        title: "File Stored",
+        description: "The file has been successfully stored in chunks.",
+      });
     } catch (error) {
-      handleError("Failed to store the file due to storage limitations.");
+      handleError("Failed to store the file due to storage limitations. Try a smaller file or clear some browser storage.");
     }
   };
 
@@ -88,12 +93,7 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonCont
         setUsePreExistingFile={setUsePreExistingFile}
       />
       {isLoading && <p>Loading pre-existing file...</p>}
-      {validationError && (
-        <Alert variant="destructive">
-          <AlertTitle>Validation Error</AlertTitle>
-          <AlertDescription>{validationError}</AlertDescription>
-        </Alert>
-      )}
+      <ValidationAlert validationError={validationError} />
       {!usePreExistingFile && (
         <div>
           <Label htmlFor="jsonContent" className="text-strawberry-600">JSONL Content</Label>
