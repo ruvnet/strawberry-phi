@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import JsonDisplay from './JsonDisplay';
 
 const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, file, setFile, jsonContent, setJsonContent }) => {
+  const [validationError, setValidationError] = useState(null);
+
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
@@ -14,11 +17,33 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, file, se
       const reader = new FileReader();
       reader.onload = (event) => {
         const content = event.target.result;
-        setJsonContent(content);
-        localStorage.setItem('uploadedJsonFile', content);
+        validateAndSetJsonContent(content);
       };
       reader.readAsText(selectedFile);
     }
+  };
+
+  const validateAndSetJsonContent = (content) => {
+    try {
+      const lines = content.trim().split('\n');
+      const parsedLines = lines.map(line => JSON.parse(line));
+      
+      if (parsedLines.every(line => typeof line === 'object' && line !== null)) {
+        setJsonContent(content);
+        localStorage.setItem('uploadedJsonFile', content);
+        setValidationError(null);
+      } else {
+        throw new Error("Each line must be a valid JSON object");
+      }
+    } catch (error) {
+      setValidationError("Invalid JSONL format. Each line must be a valid JSON object.");
+      setJsonContent('');
+    }
+  };
+
+  const handleJsonContentChange = (e) => {
+    const content = e.target.value;
+    validateAndSetJsonContent(content);
   };
 
   return (
@@ -39,20 +64,31 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, file, se
       {!usePreExistingFile && (
         <div>
           <Label htmlFor="file" className="text-strawberry-600">Upload JSONL File</Label>
-          <Input id="file" type="file" accept=".jsonl,.csv,.parquet" onChange={handleFileChange} className="border-strawberry-300 focus:border-strawberry-500" />
+          <Input id="file" type="file" accept=".jsonl" onChange={handleFileChange} className="border-strawberry-300 focus:border-strawberry-500" />
           <p className="text-sm text-strawberry-600 mt-2">
-            Accepted file types: JSONL, CSV, Parquet. CSV and Parquet files will be automatically converted to JSONL format.
+            Only JSONL files are accepted. Each line must be a valid JSON object.
           </p>
         </div>
       )}
-      <JsonDisplay jsonContent={jsonContent} />
-      {file && !usePreExistingFile && (
-        <div className="mt-4">
-          <Button onClick={() => {/* Implement file conversion logic here */}} className="bg-strawberry-500 hover:bg-strawberry-600 text-white">
-            Convert to JSONL
-          </Button>
+      {!usePreExistingFile && (
+        <div>
+          <Label htmlFor="jsonContent" className="text-strawberry-600">JSONL Content</Label>
+          <textarea
+            id="jsonContent"
+            value={jsonContent}
+            onChange={handleJsonContentChange}
+            className="w-full h-40 p-2 border rounded border-strawberry-300 focus:border-strawberry-500"
+            placeholder="Paste your JSONL content here. Each line should be a valid JSON object."
+          />
         </div>
       )}
+      {validationError && (
+        <Alert variant="destructive">
+          <AlertTitle>Validation Error</AlertTitle>
+          <AlertDescription>{validationError}</AlertDescription>
+        </Alert>
+      )}
+      <JsonDisplay jsonContent={jsonContent} />
     </div>
   );
 };
