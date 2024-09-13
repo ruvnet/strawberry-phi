@@ -70,8 +70,17 @@ const ModelTesting = () => {
         throw new Error(data.error?.message || 'Unknown error');
       }
 
-      setResponse(data.choices[0].message.content);
       setRawResponse(JSON.stringify(data, null, 2));
+
+      if (isO1Model) {
+        // Handle o1 model response
+        const content = data.choices[0].message.content;
+        const refusal = data.choices[0].message.refusal;
+        setResponse(content || refusal || "No content or refusal message provided.");
+      } else {
+        // Handle non-o1 model response
+        setResponse(data.choices[0].message.content);
+      }
     } catch (error) {
       console.error('Error testing model:', error);
       toast({
