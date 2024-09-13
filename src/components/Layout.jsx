@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { LayoutDashboard, Plus, ListOrdered, TestTube, Settings, HelpCircle, Menu, Lock } from "lucide-react";
+import { LayoutDashboard, Plus, ListOrdered, TestTube, Settings, HelpCircle, Menu, Lock, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +22,7 @@ const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [showApiKeyModal, setShowApiKeyModal] = useState(true);
   const { isApiKeySaved, setApiKey } = useApiKey();
 
   const handleNavigation = (path) => {
@@ -32,7 +33,12 @@ const Layout = ({ children }) => {
     setIsSaving(true);
     await setApiKey(apiKeyInput);
     setIsSaving(false);
-    setApiKeyInput(''); // Clear the input after saving
+    setApiKeyInput('');
+    setShowApiKeyModal(false);
+  };
+
+  const handleCloseModal = () => {
+    setShowApiKeyModal(false);
   };
 
   const Sidebar = () => (
@@ -100,14 +106,24 @@ const Layout = ({ children }) => {
         </p>
       </footer>
 
-      <Dialog open={!isApiKeySaved}>
+      <Dialog open={!isApiKeySaved && showApiKeyModal}>
         <DialogContent className="sm:max-w-[300px] md:max-w-[350px] bg-gradient-to-br from-pink-100 to-pink-200 rounded-lg shadow-lg m-0">
           <DialogHeader>
-            <DialogTitle className="text-center">
-              <span className="text-8xl animate-wiggle inline-block mb-6">🍓</span>
-              <br />
-              <span className="font-mr-dafoe text-4xl text-pink-600">Strawberry Phi</span>
-            </DialogTitle>
+            <div className="flex justify-between items-center">
+              <DialogTitle className="text-center flex-grow">
+                <span className="text-8xl animate-wiggle inline-block mb-6">🍓</span>
+                <br />
+                <span className="font-mr-dafoe text-4xl text-pink-600">Strawberry Phi</span>
+              </DialogTitle>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-2 top-2 rounded-full"
+                onClick={handleCloseModal}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
             <DialogDescription className="text-center text-pink-700">
               Fine-tune OpenAI models with ease. Please enter your OpenAI API key to get started.
             </DialogDescription>
