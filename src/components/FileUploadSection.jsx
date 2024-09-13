@@ -18,7 +18,10 @@ const FileUploadSection = ({ usePreExistingFile, setUsePreExistingFile, jsonCont
 
   const loadPreExistingFile = async () => {
     try {
-      const response = await fetch('/strawberry-phi.jsonl');
+      const response = await fetch('/finetune/strawberry-phi.jsonl');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const content = await response.text();
       validateAndCorrectJsonContent(content);
     } catch (error) {
