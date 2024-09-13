@@ -25,7 +25,7 @@ const JobStatus = () => {
       try {
         const response = await fetchJobs(apiKey, currentPage, jobsPerPage);
         setJobs(response.data);
-        setTotalJobs(response.total);
+        setTotalJobs(response.total || 0); // Ensure totalJobs is set to 0 if response.total is undefined
       } catch (error) {
         console.error('Error fetching jobs:', error);
         toast({
