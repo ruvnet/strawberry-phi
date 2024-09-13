@@ -156,7 +156,7 @@ const NewJob = () => {
               </Button>
             </TabsContent>
             <TabsContent value="model">
-              <ModelSelector model={model} setModel={setModel} forFineTuning={true} />
+              <ModelSelector model={model} setModel={setModel} />
               <div className="space-x-2 mt-4">
                 <Button onClick={() => setActiveTab("upload")} variant="outline" className="border-strawberry-300 text-strawberry-600">Back</Button>
                 <Button onClick={() => setActiveTab("configure")} className="bg-strawberry-500 hover:bg-strawberry-600 text-white">Continue</Button>
