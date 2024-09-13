@@ -12,7 +12,7 @@ const ModelTesting = () => {
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('');
   const [rawResponse, setRawResponse] = useState('');
-  const [selectedModel, setSelectedModel] = useState('gpt-3.5-turbo');
+  const [selectedModel, setSelectedModel] = useState('gpt-4o-mini-2024-07-18');
   const [parameters, setParameters] = useState({
     temperature: 0.7,
     maxTokens: 150,
@@ -96,7 +96,7 @@ const ModelTesting = () => {
             <CardTitle className="text-strawberry-700">Select Model and Configure Parameters</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ModelSelector onModelSelect={setSelectedModel} defaultModel={selectedModel} />
+            <ModelSelector onModelSelect={setSelectedModel} defaultModel="gpt-4o-mini-2024-07-18" />
             <ParameterControls
               parameters={parameters}
               setParameters={setParameters}
